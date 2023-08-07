@@ -1,0 +1,13 @@
+1) add import project
+2) amend salesquotatationcontroller
+3) add downloadexcel.aspx
+4) amend salesquotation add hide button
+5) amend purchaseordercontroller
+6) amend purchaseorders add hide button
+7) submitgrn remove checking for isvalid1
+8) amend grncontrollers
+9) amend grn detail model add import button
+10) grndetails/asndetails add OIDKey field
+11) enhance copy from po/copy from asn to get oid into OidKey in grncontroller
+12) enhance copy from po/copy from po item/copy to grn get oid into OidKey in asncontroller
+13) add sp_ImportUpdate

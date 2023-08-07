@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <NavigationItems Id="NavigationItems">
+    <Items Id="Items">
+      <Item Id="Default">
+        <Items Id="Items">
+          <Item Id="AddPickList_ListView" Removed="True" />
+          <Item Id="AddPickListDetails_ListView" Removed="True" />
+          <Item Id="LoadDetails_ListView" Removed="True" />
+          <Item Id="LoadDocTrail_ListView" Removed="True" />
+          <Item Id="vwPackList_ListView" Removed="True" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+</Application>
