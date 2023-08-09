@@ -685,7 +685,7 @@ namespace Admiral.ImportData
             {
                 if (module == "SalesQuotation")
                 {
-                    if (item.Name == "ItemCode" || item.Name == "Location" || item.Name == "Quantity" || item.Name == "AdjustedPrice" 
+                    if (item.Name == "ItemCode" || item.Name == "Location" || item.Name == "Quantity" 
                         || item.Name == "SalesQuotation")
                     {
                         var c = cells[3, i];
@@ -708,8 +708,7 @@ namespace Admiral.ImportData
 
                 if (module == "PurchaseOrder")
                 {
-                    if (item.Name == "ItemCode" || item.Name == "Quantity" || item.Name == "AdjustedPrice" 
-                        || item.Name == "PurchaseOrders")
+                    if (item.Name == "ItemCode" || item.Name == "Quantity" || item.Name == "PurchaseOrders")
                     {
                         var c = cells[3, i];
                         c.Value = item.Caption;
