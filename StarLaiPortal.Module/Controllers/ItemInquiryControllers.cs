@@ -34,6 +34,7 @@ using System.Text;
 using System.Web;
 
 // 2023-07-28 add item button do not pop out ver 1.0.7
+// 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
 
 namespace StarLaiPortal.Module.Controllers
 {
@@ -141,7 +142,10 @@ namespace StarLaiPortal.Module.Controllers
 
             if (selectedObject.PriceList1 != null && selectedObject.PriceList2 != null 
                 && selectedObject.PriceList3 != null && selectedObject.PriceList4 != null 
-                && selectedObject.Stock1 != null && selectedObject.Stock2 != null)
+                && selectedObject.Stock1 != null && selectedObject.Stock2 != null
+                // Start ver 1.0.8
+                && selectedObject.Stock3 != null && selectedObject.Stock4 != null)
+                // End ver 1.0.8
             {
                 //for (int i = 0; selectedObject.ItemInquiryDetails.Count > i;)
                 //{
@@ -154,6 +158,9 @@ namespace StarLaiPortal.Module.Controllers
                     new OperandValue(selectedObject.PriceList1.ListNum), new OperandValue(selectedObject.PriceList2.ListNum),
                     new OperandValue(selectedObject.PriceList3.ListNum), new OperandValue(selectedObject.PriceList4.ListNum),
                     new OperandValue(selectedObject.Stock1.WarehouseCode), new OperandValue(selectedObject.Stock2.WarehouseCode),
+                    // Start ver 1.0.8
+                    new OperandValue(selectedObject.Stock3.WarehouseCode), new OperandValue(selectedObject.Stock4.WarehouseCode),
+                    // End ver 1.0.8
                     new OperandValue(selectedObject.Method), new OperandValue(cardcode), new OperandValue(selectedObject.Oid));
 
                 //if (sprocData.ResultSet.Count() > 0)

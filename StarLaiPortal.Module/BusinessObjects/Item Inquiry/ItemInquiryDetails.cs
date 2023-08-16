@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
+
 namespace StarLaiPortal.Module.BusinessObjects.Item_Inquiry
 {
     [DefaultClassOptions]
@@ -271,9 +273,43 @@ namespace StarLaiPortal.Module.BusinessObjects.Item_Inquiry
             }
         }
 
+        // Start ver 1.0.8
+        private decimal _Stock3;
+        [XafDisplayName("Stock 3")]
+        [DbType("numeric(18,6)")]
+        [ModelDefault("DisplayFormat", "{0:n2}")]
+        [Index(21), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
+        [Appearance("Stock3", Enabled = false)]
+        public decimal Stock3
+
+        {
+            get { return _Stock3; }
+            set
+            {
+                SetPropertyValue("Stock3", ref _Stock3, value);
+            }
+        }
+
+        private decimal _Stock4;
+        [XafDisplayName("Stock 4")]
+        [DbType("numeric(18,6)")]
+        [ModelDefault("DisplayFormat", "{0:n2}")]
+        [Index(22), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
+        [Appearance("Stock4", Enabled = false)]
+        public decimal Stock4
+
+        {
+            get { return _Stock4; }
+            set
+            {
+                SetPropertyValue("Stock4", ref _Stock4, value);
+            }
+        }
+        // End ver 1.0.8
+
         private string _OriginalCatalog;
         [XafDisplayName("Original Catalog No.")]
-        [Index(21), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
+        [Index(23), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
         [Appearance("OriginalCatalog", Enabled = false)]
         public string OriginalCatalog
 
@@ -287,7 +323,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Item_Inquiry
 
         private string _HierarchyLevel1;
         [XafDisplayName("Hierarchy Level 1")]
-        [Index(22), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Index(24), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
         [Appearance("HierarchyLevel1", Enabled = false)]
         public string HierarchyLevel1
 
@@ -301,7 +337,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Item_Inquiry
 
         private string _HierarchyLevel2;
         [XafDisplayName("Hierarchy Level 2")]
-        [Index(23), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Index(25), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
         [Appearance("HierarchyLevel2", Enabled = false)]
         public string HierarchyLevel2
 
@@ -315,7 +351,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Item_Inquiry
 
         private string _HierarchyLevel3;
         [XafDisplayName("Hierarchy Level 3")]
-        [Index(25), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Index(26), VisibleInListView(false), VisibleInDetailView(true), VisibleInLookupListView(false)]
         [Appearance("HierarchyLevel3", Enabled = false)]
         public string HierarchyLevel3
 

@@ -7,12 +7,15 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using StarLaiPortal.Module.BusinessObjects.Pick_List;
 using StarLaiPortal.Module.BusinessObjects.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+
+// 2023-08-16 Add SAPPONo, PortalPoNo, AsnNo ver 1.0.8
 
 namespace StarLaiPortal.Module.BusinessObjects.GRN
 {
@@ -299,6 +302,110 @@ namespace StarLaiPortal.Module.BusinessObjects.GRN
                 SetPropertyValue("PrintStatus", ref _PrintStatus, value);
             }
         }
+
+        // Start ver 1.0.8
+        [NonPersistent]
+        [XafDisplayName("SAP PO No.")]
+        [Index(33), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Appearance("SAPPONo", Enabled = false)]
+        public string SAPPONo
+        {
+            get
+            {
+                string rtn = null;
+                string dupso = null;
+                foreach (GRNDetails dtl in this.GRNDetails)
+                {
+                    if (dtl.PONo != null)
+                    {
+                        if (dupso != dtl.PONo)
+                        {
+                            if (rtn == null)
+                            {
+                                rtn = dtl.PONo;
+                            }
+                            else
+                            {
+                                rtn = rtn + ", " + dtl.PONo;
+                            }
+
+                            dupso = dtl.PONo;
+                        }
+                    }
+                }
+
+                return rtn;
+            }
+        }
+
+        [NonPersistent]
+        [XafDisplayName("Portal PO No.")]
+        [Index(35), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Appearance("PortalPONo", Enabled = false)]
+        public string PortalPONo
+        {
+            get
+            {
+                string rtn = null;
+                string dupso = null;
+                foreach (GRNDetails dtl in this.GRNDetails)
+                {
+                    if (dtl.PORefNo != null)
+                    {
+                        if (dupso != dtl.PORefNo)
+                        {
+                            if (rtn == null)
+                            {
+                                rtn = dtl.PORefNo;
+                            }
+                            else
+                            {
+                                rtn = rtn + ", " + dtl.PORefNo;
+                            }
+
+                            dupso = dtl.PORefNo;
+                        }
+                    }
+                }
+
+                return rtn;
+            }
+        }
+
+        [NonPersistent]
+        [XafDisplayName("ASN No.")]
+        [Index(38), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(false)]
+        [Appearance("ASNNo", Enabled = false)]
+        public string ASNNo
+        {
+            get
+            {
+                string rtn = null;
+                string dupso = null;
+                foreach (GRNDetails dtl in this.GRNDetails)
+                {
+                    if (dtl.ASNBaseDoc != null)
+                    {
+                        if (dupso != dtl.ASNBaseDoc)
+                        {
+                            if (rtn == null)
+                            {
+                                rtn = dtl.ASNBaseDoc;
+                            }
+                            else
+                            {
+                                rtn = rtn + ", " + dtl.ASNBaseDoc;
+                            }
+
+                            dupso = dtl.ASNBaseDoc;
+                        }
+                    }
+                }
+
+                return rtn;
+            }
+        }
+        // End ver 1.0.8
 
         private string _Remarks;
         [XafDisplayName("Remarks")]

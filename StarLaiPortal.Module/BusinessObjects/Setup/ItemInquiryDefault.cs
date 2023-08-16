@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
+
 namespace StarLaiPortal.Module.BusinessObjects.Setup
 {
     [DefaultClassOptions]
@@ -135,6 +137,34 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
                 SetPropertyValue("Stock2", ref _Stock2, value);
             }
         }
+
+        // Start ver 1.0.8
+        private vwWarehouse _Stock3;
+        [NoForeignKey]
+        [XafDisplayName("Stock 3")]
+        [Index(14), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
+        public vwWarehouse Stock3
+        {
+            get { return _Stock3; }
+            set
+            {
+                SetPropertyValue("Stock3", ref _Stock3, value);
+            }
+        }
+
+        private vwWarehouse _Stock4;
+        [NoForeignKey]
+        [XafDisplayName("Stock 4")]
+        [Index(15), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
+        public vwWarehouse Stock4
+        {
+            get { return _Stock4; }
+            set
+            {
+                SetPropertyValue("Stock4", ref _Stock4, value);
+            }
+        }
+        // End ver 1.0.8
 
         private bool _IsActive;
         [XafDisplayName("Active")]

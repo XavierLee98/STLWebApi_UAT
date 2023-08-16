@@ -6,7 +6,9 @@ using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
+using DevExpress.Web;
 using DevExpress.Xpo;
+using StarLaiPortal.Module.BusinessObjects.Sales_Quotation;
 using StarLaiPortal.Module.BusinessObjects.Setup;
 using StarLaiPortal.Module.BusinessObjects.View;
 using System;
@@ -14,6 +16,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+
+// 2023-08-16 update detail when change paymenttype ver 1.0.8
 
 namespace StarLaiPortal.Module.BusinessObjects.Sales_Order_Collection
 {
@@ -205,6 +209,21 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order_Collection
                     CheckNum = null;
                     CreditCardNum = null;
                     CreditCardValidUntil = null;
+
+                    // Start ver 1.0.8
+                    bool update = false;
+
+                    foreach (SalesOrderCollectionDetails dtl in this.SalesOrderCollectionDetails)
+                    {
+                        dtl.GLAccount = Session.GetObjectByKey<vwBank>(this.PaymentType.GLAccount);
+                        update = true;
+                    }
+
+                    if (update == true)
+                    {
+                        this.Session.CommitTransaction();
+                    }
+                    // End ver 1.0.8
                 }
             }
         }

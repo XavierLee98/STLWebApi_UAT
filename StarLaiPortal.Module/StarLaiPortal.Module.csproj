@@ -148,6 +148,7 @@
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryASN.cs" />
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryBundleID.cs" />
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryBundleTransferDetails.cs" />
+    <Compile Include="BusinessObjects\Inquiry View\vwInquiryCreditMemo.cs" />
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryCurrentARAging.cs" />
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryDelivery.cs" />
     <Compile Include="BusinessObjects\Inquiry View\vwInquiryGRN.cs" />
@@ -942,6 +943,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UnusableNodes48.xml">
+      <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UnusableNodes49.xml">
+      <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UnusableNodes50.xml">
       <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
       <SubType>Designer</SubType>
     </None>

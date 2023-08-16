@@ -1,6 +1,6 @@
 ﻿namespace StarLaiPortal.Module.Controllers
 {
-    partial class e
+    partial class ASNControllers
     {
         /// <summary>
         /// Required designer variable.
@@ -154,7 +154,7 @@
             this.ImportASN.CustomizePopupWindowParams += new DevExpress.ExpressApp.Actions.CustomizePopupWindowParamsEventHandler(this.ImportASN_CustomizePopupWindowParams);
             this.ImportASN.Execute += new DevExpress.ExpressApp.Actions.PopupWindowShowActionExecuteEventHandler(this.ImportASN_Execute);
             // 
-            // e
+            // ASNControllers
             // 
             this.Actions.Add(this.ASNCopyFromPO);
             this.Actions.Add(this.ASNCopyFromPODetails);

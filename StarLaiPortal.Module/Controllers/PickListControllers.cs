@@ -31,6 +31,7 @@ using System.Text;
 using System.Web;
 
 // 2023-07-28 add print button and do not add count in preview ver 1.0.7
+// 2023-08-16 preview multiple picklist ver 1.0.8
 
 namespace StarLaiPortal.Module.Controllers
 {
@@ -855,8 +856,8 @@ namespace StarLaiPortal.Module.Controllers
             string strPwd;
             string filename;
 
-            SqlConnection conn = new SqlConnection(genCon.getConnectionString());
             PickList pl = (PickList)View.CurrentObject;
+            SqlConnection conn = new SqlConnection(genCon.getConnectionString());
             ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
 
             try
@@ -1138,6 +1139,9 @@ namespace StarLaiPortal.Module.Controllers
         {
             if (e.SelectedObjects.Count >= 1)
             {
+                SqlConnection conn = new SqlConnection(genCon.getConnectionString());
+                ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
+                int cnt = 1;
                 foreach (PickList dtl in e.SelectedObjects)
                 {
                     string strServer;
@@ -1146,8 +1150,6 @@ namespace StarLaiPortal.Module.Controllers
                     string strPwd;
                     string filename;
 
-                    SqlConnection conn = new SqlConnection(genCon.getConnectionString());
-                    ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
                     IObjectSpace os = Application.CreateObjectSpace();
                     PickList pl = os.FindObject<PickList>(new BinaryOperator("Oid", dtl.Oid));
 
@@ -1179,13 +1181,14 @@ namespace StarLaiPortal.Module.Controllers
                             + DateTime.Parse(pl.DocDate.ToString()).ToString("yyyyMMdd") + ".pdf";
                         var script = "window.open('" + url + "');";
 
-                        WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
+                        WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile" + cnt, script);
 
                         pl.PrintStatus = PrintStatus.Printed;
                         pl.PrintCount++;
 
                         os.CommitChanges();
                         os.Refresh();
+                        cnt++;
                     }
                     catch (Exception ex)
                     {

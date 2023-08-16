@@ -22,6 +22,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
+// 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
+
 namespace StarLaiPortal.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
@@ -525,6 +527,18 @@ namespace StarLaiPortal.Module.Controllers
                     ((ItemInquiry)dv.CurrentObject).Stock2 = ((ItemInquiry)dv.CurrentObject).Session.GetObjectByKey<vwWarehouse>
                         (defaultdata.Stock2.WarehouseCode);
                 }
+                // Start ver 1.0.8
+                if (defaultdata.Stock3 != null)
+                {
+                    ((ItemInquiry)dv.CurrentObject).Stock3 = ((ItemInquiry)dv.CurrentObject).Session.GetObjectByKey<vwWarehouse>
+                        (defaultdata.Stock3.WarehouseCode);
+                }
+                if (defaultdata.Stock4 != null)
+                {
+                    ((ItemInquiry)dv.CurrentObject).Stock4 = ((ItemInquiry)dv.CurrentObject).Session.GetObjectByKey<vwWarehouse>
+                        (defaultdata.Stock4.WarehouseCode);
+                }
+                // End ver 1.0.8
             }
 
             inqos.CommitChanges();

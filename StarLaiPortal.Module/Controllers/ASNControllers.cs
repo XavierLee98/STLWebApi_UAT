@@ -30,10 +30,10 @@ using System.Web;
 namespace StarLaiPortal.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
-    public partial class e : ViewController
+    public partial class ASNControllers : ViewController
     {
         GeneralControllers genCon;
-        public e()
+        public ASNControllers()
         {
             InitializeComponent();
             // Target required Views (via the TargetXXX properties) and create their Actions.
@@ -582,7 +582,7 @@ namespace StarLaiPortal.Module.Controllers
                     if (dtl.DefBin != null)
                     {
                         newgrnitem.DefBin = newgrnitem.Session.FindObject
-                            <vwBin>(CriteriaOperator.Parse("AbsEntry = ?", dtl.DefBin));
+                            <vwBin>(CriteriaOperator.Parse("BinCode = ?", dtl.DefBin.BinCode));
                     }
                     newgrnitem.OpenQty = dtl.UnloadQty;
                     newgrnitem.Received = dtl.UnloadQty;

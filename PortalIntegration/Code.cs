@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 // 2023-07-28 add GRPO Correction ver 1.0.7
+// 2023-08-16 temporary fix glaccount ver 1.0.8
 
 namespace PortalIntegration
 {
@@ -1592,6 +1593,7 @@ namespace PortalIntegration
                             {
                                 oDoc.Lines.BinAllocations.BinAbsEntry = dtl.DefBin.AbsEntry;
                                 oDoc.Lines.BinAllocations.Quantity = (double)dtl.Received;
+                                //oDoc.Lines.BinAllocations.Add();
                             }
 
                             //oDoc.Lines.UnitPrice = (double)dtl.UnitPrice;// / oDoc.Lines.Quantity;
@@ -2865,19 +2867,27 @@ namespace PortalIntegration
                                 oDoc.Address = so.BillingAddressfield;
                             }
 
-                            if (detail.PaymentAmount > 0)
-                            {
-                                if (oTargetDoc.PaymentType.PaymentMean == "CASH")
+                                if (detail.PaymentAmount > 0)
                                 {
-                                    oDoc.CashSum += Convert.ToDouble(detail.PaymentAmount);
+                                    if (oTargetDoc.PaymentType.PaymentMean == "CASH")
+                                    {
+                                        oDoc.CashSum += Convert.ToDouble(detail.PaymentAmount);
                                     if (detail.GLAccount != null)
-                                        oDoc.CashAccount = detail.GLAccount.AcctCode;
+                                    {
+                                        // Start ver 1.0.8
+                                        //oDoc.CashAccount = detail.GLAccount.AcctCode;
+                                        oDoc.CashAccount = oTargetDoc.PaymentType.GLAccount;
+                                        // End ver 1.0.8
+                                    }
                                 }
 
                                 if (oTargetDoc.PaymentType.PaymentMean == "CCARD")
                                 {
                                     oDoc.CreditCards.CreditSum += Convert.ToDouble(detail.PaymentAmount);
-                                    oDoc.CreditCards.CreditAcct = detail.GLAccount.AcctCode;
+                                    // Start ver 1.0.8
+                                    //oDoc.CreditCards.CreditAcct = detail.GLAccount.AcctCode;
+                                    oDoc.CreditCards.CreditAcct = oTargetDoc.PaymentType.GLAccount;
+                                    // End ver 1.0.8
                                     oDoc.CreditCards.PaymentMethodCode = oTargetDoc.PaymentType.CCardPayMethodCode;
                                     oDoc.CreditCards.VoucherNum = oTargetDoc.ReferenceNum;
                                     oDoc.CreditCards.CardValidUntil = DateTime.Parse("01/12/" + DateTime.Today.Year);
@@ -2888,14 +2898,20 @@ namespace PortalIntegration
                                 if (oTargetDoc.PaymentType.PaymentMean == "TRANSFER")
                                 {
                                     oDoc.TransferSum += Convert.ToDouble(detail.PaymentAmount);
-                                    oDoc.TransferAccount = detail.GLAccount.AcctCode;
+                                    // Start ver 1.0.8
+                                    //oDoc.TransferAccount = detail.GLAccount.AcctCode;
+                                    oDoc.TransferAccount = oTargetDoc.PaymentType.GLAccount;
+                                    // End ver 1.0.GLAccount
                                     oDoc.TransferReference = oTargetDoc.ReferenceNum;
                                 }
 
                                 if (oTargetDoc.PaymentType.PaymentMean == "CHEQUE")
                                 {
                                     oDoc.Checks.CheckSum += Convert.ToDouble(detail.PaymentAmount);
-                                    oDoc.Checks.CheckAccount = detail.GLAccount.AcctCode;
+                                    // Start ver 1.0.8
+                                    //oDoc.Checks.CheckAccount = detail.GLAccount.AcctCode;
+                                    oDoc.Checks.CheckAccount = oTargetDoc.PaymentType.GLAccount;
+                                    // End ver 1.0.8
                                     oDoc.Checks.BankCode = oTargetDoc.ChequeBank.BankCode;
                                     oDoc.Checks.CheckNumber = int.Parse(oTargetDoc.CheckNum);
                                 }
