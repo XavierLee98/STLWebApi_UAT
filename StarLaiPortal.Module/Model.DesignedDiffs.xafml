@@ -557,19 +557,20 @@
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
           <LayoutGroup Id="SimpleEditors" Direction="Horizontal" RelativeSize="100">
-            <LayoutGroup Id="ARDownpaymentCancelDetails_col1" ShowCaption="False" Index="0" RelativeSize="49.9359795134443" IsNewNode="True">
-              <LayoutItem Id="ItemCode" ViewItem="ItemCode" Index="0" RelativeSize="6.617647058823529" IsNewNode="True" />
-              <LayoutItem Id="LegacyItemCode" ViewItem="LegacyItemCode" Index="1" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="ItemDesc" ViewItem="ItemDesc" Index="2" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="ItemDetails" ViewItem="ItemDetails" Index="3" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="UOM" ViewItem="UOM" Index="4" RelativeSize="79.044117647058826" IsNewNode="True" />
+            <LayoutGroup Id="ARDownpaymentCancelDetails_col1" ShowCaption="False" Index="0" RelativeSize="49.856321839080458" IsNewNode="True">
+              <LayoutItem Id="ItemCode" ViewItem="ItemCode" Index="0" RelativeSize="6.7669172932330826" IsNewNode="True" />
+              <LayoutItem Id="LegacyItemCode" ViewItem="LegacyItemCode" Index="1" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="ItemDesc" ViewItem="ItemDesc" Index="2" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="ItemDetails" ViewItem="ItemDetails" Index="3" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="UOM" ViewItem="UOM" Index="4" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="ReasonCode" ViewItem="ReasonCode" Index="5" RelativeSize="73.6842105263158" IsNewNode="True" />
             </LayoutGroup>
-            <LayoutGroup Id="ARDownpaymentCancelDetails_col2" ShowCaption="False" Index="1" RelativeSize="50.0640204865557" IsNewNode="True">
-              <LayoutItem Id="Warehouse" ViewItem="Warehouse" Index="0" RelativeSize="6.617647058823529" IsNewNode="True" />
-              <LayoutItem Id="Bin" ViewItem="Bin" Index="1" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="Quantity" ViewItem="Quantity" Index="2" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="Price" ViewItem="Price" Index="3" RelativeSize="4.7794117647058822" IsNewNode="True" />
-              <LayoutItem Id="Total" ViewItem="Total" Index="4" RelativeSize="79.044117647058826" IsNewNode="True" />
+            <LayoutGroup Id="ARDownpaymentCancelDetails_col2" ShowCaption="False" Index="1" RelativeSize="50.143678160919542" IsNewNode="True">
+              <LayoutItem Id="Warehouse" ViewItem="Warehouse" Index="0" RelativeSize="6.7669172932330826" IsNewNode="True" />
+              <LayoutItem Id="Bin" ViewItem="Bin" Index="1" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="Quantity" ViewItem="Quantity" Index="2" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="Price" ViewItem="Price" Index="3" RelativeSize="4.8872180451127818" IsNewNode="True" />
+              <LayoutItem Id="Total" ViewItem="Total" Index="4" RelativeSize="78.571428571428569" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="ARDownpaymentCancelDetails" Removed="True" />
           </LayoutGroup>

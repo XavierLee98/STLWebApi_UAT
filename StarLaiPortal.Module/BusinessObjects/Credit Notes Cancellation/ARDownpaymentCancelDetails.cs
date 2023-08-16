@@ -15,11 +15,13 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 
+// 2023-08-16 Add reason code ver 1.0.8
+
 namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
 {
     [DefaultClassOptions]
     [Appearance("HideNew", AppearanceItemType.Action, "True", TargetItems = "New", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
-    [Appearance("HideEdit", AppearanceItemType.Action, "True", TargetItems = "SwitchToEditMode; Edit", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    //[Appearance("HideEdit", AppearanceItemType.Action, "True", TargetItems = "SwitchToEditMode; Edit", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
     //[Appearance("HideDelete", AppearanceItemType.Action, "True", TargetItems = "Delete", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
     [Appearance("LinkDoc", AppearanceItemType = "Action", TargetItems = "Link", Context = "ListView", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide)]
     [Appearance("UnlinkDoc", AppearanceItemType = "Action", TargetItems = "Unlink", Context = "ListView", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide)]
@@ -167,6 +169,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
 
         private string _ItemDetails;
         [XafDisplayName("Item Details")]
+        [Appearance("ItemDetails", Enabled = false)]
         [Index(5), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
         public string ItemDetails
         {
@@ -189,6 +192,25 @@ namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
                 SetPropertyValue("UOM", ref _UOM, value);
             }
         }
+
+        // Start ver 1.0.8
+        private vwReasonCode _ReasonCode;
+        [NoForeignKey]
+        [ImmediatePostData]
+        [DataSourceCriteria("Type = 'SalesReturn'")]
+        //[RuleRequiredField(DefaultContexts.Save)]
+        [XafDisplayName("Reason Code")]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
+        [Index(11), VisibleInListView(true), VisibleInDetailView(true), VisibleInLookupListView(true)]
+        public vwReasonCode ReasonCode
+        {
+            get { return _ReasonCode; }
+            set
+            {
+                SetPropertyValue("ReasonCode", ref _ReasonCode, value);
+            }
+        }
+        // End ver 1.0.8
 
         private vwWarehouse _Warehouse;
         [NoForeignKey]

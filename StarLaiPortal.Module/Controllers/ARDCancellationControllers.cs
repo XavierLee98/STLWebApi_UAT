@@ -19,6 +19,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 
+// 2023-08-16 Add reason code ver 1.0.8
+
 namespace StarLaiPortal.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
@@ -231,61 +233,72 @@ namespace StarLaiPortal.Module.Controllers
 
             if (selectedObject.IsValid == true)
             {
-                selectedObject.Status = DocStatus.Submitted;
-                ARDownpaymentCancellationDocTrail ds = ObjectSpace.CreateObject<ARDownpaymentCancellationDocTrail>();
-                ds.DocStatus = DocStatus.Submitted;
-                ds.DocRemarks = p.ParamString;
-                selectedObject.ARDownpaymentCancellationDocTrail.Add(ds);
-
-                ObjectSpace.CommitChanges();
-                ObjectSpace.Refresh();
-
-                #region Get approval
-                List<string> ToEmails = new List<string>();
-                string emailbody = "";
-                string emailsubject = "";
-                string emailaddress = "";
-                Guid emailuser;
-                DateTime emailtime = DateTime.Now;
-
-                string getapproval = "EXEC sp_GetApproval '" + selectedObject.CreateUser.Oid + "', '" + selectedObject.Oid + "', 'ARDownpaymentCancellation'";
-                if (conn.State == ConnectionState.Open)
+                // Start ver 1.0.8
+                if (selectedObject.IsValid1 == false)
                 {
+                // End ver 1.0.8
+                    selectedObject.Status = DocStatus.Submitted;
+                    ARDownpaymentCancellationDocTrail ds = ObjectSpace.CreateObject<ARDownpaymentCancellationDocTrail>();
+                    ds.DocStatus = DocStatus.Submitted;
+                    ds.DocRemarks = p.ParamString;
+                    selectedObject.ARDownpaymentCancellationDocTrail.Add(ds);
+
+                    ObjectSpace.CommitChanges();
+                    ObjectSpace.Refresh();
+
+                    #region Get approval
+                    List<string> ToEmails = new List<string>();
+                    string emailbody = "";
+                    string emailsubject = "";
+                    string emailaddress = "";
+                    Guid emailuser;
+                    DateTime emailtime = DateTime.Now;
+
+                    string getapproval = "EXEC sp_GetApproval '" + selectedObject.CreateUser.Oid + "', '" + selectedObject.Oid + "', 'ARDownpaymentCancellation'";
+                    if (conn.State == ConnectionState.Open)
+                    {
+                        conn.Close();
+                    }
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(getapproval, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (reader.GetString(1) != "")
+                        {
+                            emailbody = "Dear Sir/Madam, " + System.Environment.NewLine + System.Environment.NewLine +
+                                   reader.GetString(3) + System.Environment.NewLine + GeneralSettings.appurl + reader.GetString(2) +
+                                   System.Environment.NewLine + System.Environment.NewLine;
+
+                            emailsubject = "AR Downpayment Cancellation Approval";
+                            emailaddress = reader.GetString(1);
+                            emailuser = reader.GetGuid(0);
+
+                            ToEmails.Add(emailaddress);
+                        }
+                    }
                     conn.Close();
-                }
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(getapproval, conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    if (reader.GetString(1) != "")
+
+                    if (ToEmails.Count > 0)
                     {
-                        emailbody = "Dear Sir/Madam, " + System.Environment.NewLine + System.Environment.NewLine +
-                               reader.GetString(3) + System.Environment.NewLine + GeneralSettings.appurl + reader.GetString(2) +
-                               System.Environment.NewLine + System.Environment.NewLine;
-
-                        emailsubject = "AR Downpayment Cancellation Approval";
-                        emailaddress = reader.GetString(1);
-                        emailuser = reader.GetGuid(0);
-
-                        ToEmails.Add(emailaddress);
+                        if (genCon.SendEmail(emailsubject, emailbody, ToEmails) == 1)
+                        {
+                        }
                     }
-                }
-                conn.Close();
 
-                if (ToEmails.Count > 0)
+                    #endregion
+
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    ARDownpaymentCancel trx = os.FindObject<ARDownpaymentCancel>(new BinaryOperator("Oid", selectedObject.Oid));
+                    openNewView(os, trx, ViewEditMode.View);
+                    showMsg("Successful", "Submit Done.", InformationType.Success);
+                // Start ver 1.0.8
+                }
+                else
                 {
-                    if (genCon.SendEmail(emailsubject, emailbody, ToEmails) == 1)
-                    {
-                    }
+                    showMsg("Error", "Please fill in reason code.", InformationType.Error);
                 }
-
-                #endregion
-
-                IObjectSpace os = Application.CreateObjectSpace();
-                ARDownpaymentCancel trx = os.FindObject<ARDownpaymentCancel>(new BinaryOperator("Oid", selectedObject.Oid));
-                openNewView(os, trx, ViewEditMode.View);
-                showMsg("Successful", "Submit Done.", InformationType.Success);
+                // End ver 1.0.8
             }
             else
             {

@@ -7,6 +7,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using StarLaiPortal.Module.BusinessObjects.Sales_Return;
 using StarLaiPortal.Module.BusinessObjects.View;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+
+// 2023-08-16 Add reason code ver 1.0.8
 
 namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
 {
@@ -347,6 +350,25 @@ namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
             }
         }
 
+        // Start ver 1.0.8
+        [Browsable(false)]
+        public bool IsValid1
+        {
+            get
+            {
+                foreach (ARDownpaymentCancelDetails dtl in this.ARDownpaymentCancelDetails)
+                {
+                    if (dtl.ReasonCode == null)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        // End ver 1.0.8
+
         [Browsable(false)]
         public bool IsValid2
         {
@@ -363,7 +385,9 @@ namespace StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation
 
         [Association("ARDownpaymentCancel-ARDownpaymentCancelDetails")]
         [XafDisplayName("Content")]
-        [Appearance("ARDownpaymentCancelDetails", Enabled = false)]
+        // Start ver 1.0.8
+        //[Appearance("ARDownpaymentCancelDetails", Enabled = false)]
+        // End ver 1.0.8
         public XPCollection<ARDownpaymentCancelDetails> ARDownpaymentCancelDetails
         {
             get { return GetCollection<ARDownpaymentCancelDetails>("ARDownpaymentCancelDetails"); }

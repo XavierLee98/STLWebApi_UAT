@@ -57,6 +57,9 @@ namespace StarLaiPortal.Module.Controllers
             // Start ver 1.0.7
             this.PrintPL.Active.SetItemValue("Enabled", false);
             // End ver 1.0.7
+            // Start ver 1.0.8
+            this.PrintPLByZone.Active.SetItemValue("Enabled", false);
+            // End ver 1.0.8
         }
         protected override void OnViewControlsCreated()
         {
@@ -87,6 +90,9 @@ namespace StarLaiPortal.Module.Controllers
                     // Start ver 1.0.7
                     this.PrintPL.Active.SetItemValue("Enabled", true);
                     // End ver 1.0.7
+                    // Start ver 1.0.8
+                    this.PrintPLByZone.Active.SetItemValue("Enabled", true);
+                    // End ver 1.0.8
                 }
                 else
                 {
@@ -96,12 +102,18 @@ namespace StarLaiPortal.Module.Controllers
                     // Start ver 1.0.7
                     this.PrintPL.Active.SetItemValue("Enabled", false);
                     // End ver 1.0.7
+                    // Start ver 1.0.8
+                    this.PrintPLByZone.Active.SetItemValue("Enabled", false);
+                    // End ver 1.0.8
                 }
             }
             // Start ver 1.0.7
             else if (View.Id == "PickList_ListView")
             {
                 this.PrintPL.Active.SetItemValue("Enabled", true);
+                // Start ver 1.0.8
+                this.PrintPLByZone.Active.SetItemValue("Enabled", true);
+                // End ver 1.0.8
             }
             // End ver 1.0.7
             else
@@ -115,6 +127,9 @@ namespace StarLaiPortal.Module.Controllers
                 // Start ver 1.0.7
                 this.PrintPL.Active.SetItemValue("Enabled", false);
                 // End ver 1.0.7
+                // Start ver 1.0.8
+                this.PrintPLByZone.Active.SetItemValue("Enabled", false);
+                // End ver 1.0.8
             }
 
             if (View.Id == "PickList_PickListDetails_ListView")
@@ -1202,5 +1217,74 @@ namespace StarLaiPortal.Module.Controllers
             }
         }
         // End ver 1.0.7
+
+        // Start ver 1.0.8
+        private void PrintPLByZone_Execute(object sender, SimpleActionExecuteEventArgs e)
+        {
+            if (e.SelectedObjects.Count >= 1)
+            {
+                SqlConnection conn = new SqlConnection(genCon.getConnectionString());
+                ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
+                int cnt = 1;
+                foreach (PickList dtl in e.SelectedObjects)
+                {
+                    string strServer;
+                    string strDatabase;
+                    string strUserID;
+                    string strPwd;
+                    string filename;
+
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    PickList pl = os.FindObject<PickList>(new BinaryOperator("Oid", dtl.Oid));
+
+                    try
+                    {
+                        ReportDocument doc = new ReportDocument();
+                        strServer = ConfigurationManager.AppSettings.Get("SQLserver").ToString();
+                        doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\PickListByZone.rpt"));
+                        strDatabase = conn.Database;
+                        strUserID = ConfigurationManager.AppSettings.Get("SQLID").ToString();
+                        strPwd = ConfigurationManager.AppSettings.Get("SQLPass").ToString();
+                        doc.DataSourceConnections[0].SetConnection(strServer, strDatabase, strUserID, strPwd);
+                        doc.Refresh();
+
+                        doc.SetParameterValue("dockey@", pl.Oid);
+                        doc.SetParameterValue("dbName@", conn.Database);
+
+                        filename = ConfigurationManager.AppSettings.Get("ReportPath").ToString() + conn.Database
+                            + "_" + pl.Oid + "_" + user.UserName + "_PLByZone_"
+                            + DateTime.Parse(pl.DocDate.ToString()).ToString("yyyyMMdd") + ".pdf";
+
+                        doc.ExportToDisk(ExportFormatType.PortableDocFormat, filename);
+                        doc.Close();
+                        doc.Dispose();
+
+                        string url = HttpContext.Current.Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority +
+                            ConfigurationManager.AppSettings.Get("PrintPath").ToString() + conn.Database
+                            + "_" + pl.Oid + "_" + user.UserName + "_PLByZone_"
+                            + DateTime.Parse(pl.DocDate.ToString()).ToString("yyyyMMdd") + ".pdf";
+                        var script = "window.open('" + url + "');";
+
+                        WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile" + cnt, script);
+
+                        //pl.PrintStatus = PrintStatus.Printed;
+                        //pl.PrintCount++;
+
+                        //os.CommitChanges();
+                        //os.Refresh();
+                        cnt++;
+                    }
+                    catch (Exception ex)
+                    {
+                        showMsg("Fail", ex.Message, InformationType.Error);
+                    }
+                }
+            }
+            else
+            {
+                showMsg("Fail", "Please select pick list to print.", InformationType.Error);
+            }
+        }
+        // End ver 1.0.8
     }
 }

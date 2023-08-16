@@ -36,6 +36,7 @@
             this.PLCopyFromSOCG = new DevExpress.ExpressApp.Actions.PopupWindowShowAction(this.components);
             this.PLCopyFromPLDetail = new DevExpress.ExpressApp.Actions.PopupWindowShowAction(this.components);
             this.PrintPL = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
+            this.PrintPLByZone = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             // 
             // PLCopyFromSOC
             // 
@@ -115,6 +116,15 @@
             this.PrintPL.ToolTip = null;
             this.PrintPL.Execute += new DevExpress.ExpressApp.Actions.SimpleActionExecuteEventHandler(this.PrintPL_Execute);
             // 
+            // PrintPLByZone
+            // 
+            this.PrintPLByZone.Caption = "Print By Zone";
+            this.PrintPLByZone.Category = "ObjectsCreation";
+            this.PrintPLByZone.ConfirmationMessage = null;
+            this.PrintPLByZone.Id = "PrintPLByZone";
+            this.PrintPLByZone.ToolTip = null;
+            this.PrintPLByZone.Execute += new DevExpress.ExpressApp.Actions.SimpleActionExecuteEventHandler(this.PrintPLByZone_Execute);
+            // 
             // PickListControllers
             // 
             this.Actions.Add(this.PLCopyFromSOC);
@@ -124,6 +134,7 @@
             this.Actions.Add(this.PLCopyFromSOCG);
             this.Actions.Add(this.PLCopyFromPLDetail);
             this.Actions.Add(this.PrintPL);
+            this.Actions.Add(this.PrintPLByZone);
 
         }
 
@@ -136,5 +147,6 @@
         private DevExpress.ExpressApp.Actions.PopupWindowShowAction PLCopyFromSOCG;
         private DevExpress.ExpressApp.Actions.PopupWindowShowAction PLCopyFromPLDetail;
         private DevExpress.ExpressApp.Actions.SimpleAction PrintPL;
+        private DevExpress.ExpressApp.Actions.SimpleAction PrintPLByZone;
     }
 }
