@@ -1200,14 +1200,14 @@
         <ColumnInfo Id="Price1" Width="54" />
         <ColumnInfo Id="Price2" SortIndex="0" SortOrder="Ascending" Width="36" />
         <ColumnInfo Id="Price3" Width="40" />
-        <ColumnInfo Id="Price4" Width="20" />
-        <ColumnInfo Id="Stock1" Index="8" Width="54" />
-        <ColumnInfo Id="Stock2" Index="9" />
-        <ColumnInfo Id="Remarks" Index="10" />
-        <ColumnInfo Id="OriginalCatalog" Index="11" />
+        <ColumnInfo Id="Price4" Width="39" />
+        <ColumnInfo Id="Stock1" Index="8" Width="74" />
+        <ColumnInfo Id="Stock2" Index="9" Width="64" />
         <ColumnInfo Id="ForeignName" Index="12" />
         <ColumnInfo Id="PictureName" Index="12" />
+        <ColumnInfo Id="Remarks" Index="12" />
         <ColumnInfo Id="BPCatalogNo" Index="13" />
+        <ColumnInfo Id="OriginalCatalog" Index="13" />
       </Columns>
       <SplitLayout Direction="Vertical" />
     </ListView>
@@ -1234,14 +1234,16 @@
         <ColumnInfo Id="Price1" PropertyName="Price1" Index="4" Width="54" IsNewNode="True" />
         <ColumnInfo Id="Price2" PropertyName="Price2" Index="5" SortIndex="0" SortOrder="Ascending" Width="36" IsNewNode="True" />
         <ColumnInfo Id="Price3" PropertyName="Price3" Index="6" Width="40" IsNewNode="True" />
-        <ColumnInfo Id="Price4" PropertyName="Price4" Index="7" Width="20" IsNewNode="True" />
-        <ColumnInfo Id="Stock1" PropertyName="Stock1" Index="8" Width="54" IsNewNode="True" />
-        <ColumnInfo Id="Stock2" PropertyName="Stock2" Index="9" IsNewNode="True" />
-        <ColumnInfo Id="Remarks" PropertyName="Remarks" Index="10" IsNewNode="True" />
-        <ColumnInfo Id="OriginalCatalog" PropertyName="OriginalCatalog" Index="11" IsNewNode="True" />
+        <ColumnInfo Id="Price4" PropertyName="Price4" Index="7" Width="39" IsNewNode="True" />
+        <ColumnInfo Id="Stock1" PropertyName="Stock1" Index="8" Width="74" IsNewNode="True" />
+        <ColumnInfo Id="Stock2" PropertyName="Stock2" Index="9" Width="64" IsNewNode="True" />
+        <ColumnInfo Id="Stock3" PropertyName="Stock3" Index="10" IsNewNode="True" />
+        <ColumnInfo Id="Stock4" PropertyName="Stock4" Index="11" IsNewNode="True" />
         <ColumnInfo Id="ForeignName" PropertyName="ForeignName" Index="12" IsNewNode="True" />
         <ColumnInfo Id="PictureName" PropertyName="PictureName" Index="12" IsNewNode="True" />
+        <ColumnInfo Id="Remarks" PropertyName="Remarks" Index="12" IsNewNode="True" />
         <ColumnInfo Id="BPCatalogNo" PropertyName="BPCatalogNo" Index="13" IsNewNode="True" />
+        <ColumnInfo Id="OriginalCatalog" PropertyName="OriginalCatalog" Index="13" IsNewNode="True" />
       </Columns>
       <SplitLayout Direction="Vertical" IsNewNode="True" />
     </ListView>
@@ -1353,6 +1355,7 @@
         <ColumnInfo Id="Price2" Width="63" />
         <ColumnInfo Id="Stock1" Width="66" />
         <ColumnInfo Id="Stock2" Width="66" />
+        <ColumnInfo Id="Stock3" Width="57" />
         <ColumnInfo Id="OriginalCatalog" Width="138" />
       </Columns>
     </ListView>
