@@ -611,7 +611,7 @@ namespace StarLaiPortal.Module.Controllers
                                     //        newpackdetails.BaseId = dtl2.Oid.ToString();
                                     //    }
                                     //}
-                                    newpackdetails.BaseId = dtl.PickListDetailOid.ToString();
+                                    newpackdetails.BaseId = dtl.Oid.ToString();
 
                                     newpack.PackListDetails.Add(newpackdetails);
                                 }

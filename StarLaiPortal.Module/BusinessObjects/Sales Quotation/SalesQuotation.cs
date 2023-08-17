@@ -3,17 +3,25 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Model;
+using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
+using DevExpress.XtraPrinting;
 using StarLaiPortal.Module.BusinessObjects.Setup;
 using StarLaiPortal.Module.BusinessObjects.View;
+using StarLaiPortal.Module.Controllers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using DevExpress.Xpo.DB.Helpers;
 
 // 2023-07-28 block submit if no address for OC and OS ver 1.0.7
 
@@ -44,8 +52,16 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Quotation
 
     public class SalesQuotation : XPObject
     { // Inherit from a different class to provide a custom primary key, concurrency and deletion behavior, etc. (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument113146.aspx).
-        // Use CodeRush to create XPO classes and properties with a few keystrokes.
-        // https://docs.devexpress.com/CodeRushForRoslyn/118557
+      // Use CodeRush to create XPO classes and properties with a few keystrokes.
+      // https://docs.devexpress.com/CodeRushForRoslyn/118557
+        //IObjectSpace ObjectSpace
+        //{
+        //    get
+        //    {
+        //        return ((IObjectSpaceLink)this).ObjectSpace;
+        //    }
+        //}
+
         public SalesQuotation(Session session)
             : base(session)
         {
@@ -233,7 +249,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Quotation
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }
@@ -417,7 +433,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Quotation
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }

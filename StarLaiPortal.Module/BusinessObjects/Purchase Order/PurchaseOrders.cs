@@ -217,7 +217,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Purchase_Order
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }
@@ -337,7 +337,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Purchase_Order
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }
@@ -577,7 +577,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Purchase_Order
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }

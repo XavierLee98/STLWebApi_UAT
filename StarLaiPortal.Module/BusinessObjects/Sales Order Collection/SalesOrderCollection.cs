@@ -219,7 +219,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order_Collection
                         update = true;
                     }
 
-                    if (update == true)
+                    if (update == true && this.DocNum != null)
                     {
                         this.Session.CommitTransaction();
                     }
@@ -248,6 +248,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order_Collection
         private string _ReferenceNum;
         [ImmediatePostData]
         [XafDisplayName("Reference Num.")]
+        [Size(27)]
         [RuleRequiredField(DefaultContexts.Save)]
         [Index(13), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(false)]
         public string ReferenceNum

@@ -165,4 +165,16 @@ namespace StarLaiPortal.Module.BusinessObjects
             }
         }
     }
+
+    //[DomainComponent]
+    //public class ObjectSpaceClass : IObjectSpaceLink
+    //{
+    //    //...
+    //    IObjectSpace objectSpace;
+    //    IObjectSpace IObjectSpaceLink.ObjectSpace
+    //    {
+    //        get { return objectSpace; }
+    //        set { objectSpace = value; }
+    //    }
+    //}
 }
