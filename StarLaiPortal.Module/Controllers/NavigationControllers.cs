@@ -161,6 +161,16 @@ namespace StarLaiPortal.Module.Controllers
                         ((ItemInquiry)detailView.CurrentObject).Stock2 = ((ItemInquiry)detailView.CurrentObject).Session.GetObjectByKey<vwWarehouse>
                             (defaultdata.Stock2.WarehouseCode);
                     }
+                    if (defaultdata.Stock3 != null)
+                    {
+                        ((ItemInquiry)detailView.CurrentObject).Stock3 = ((ItemInquiry)detailView.CurrentObject).Session.GetObjectByKey<vwWarehouse>
+                            (defaultdata.Stock3.WarehouseCode);
+                    }
+                    if (defaultdata.Stock4 != null)
+                    {
+                        ((ItemInquiry)detailView.CurrentObject).Stock4 = ((ItemInquiry)detailView.CurrentObject).Session.GetObjectByKey<vwWarehouse>
+                            (defaultdata.Stock4.WarehouseCode);
+                    }
                 }
 
                 objectSpace.CommitChanges();

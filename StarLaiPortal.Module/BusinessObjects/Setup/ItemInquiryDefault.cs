@@ -62,6 +62,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwPriceList _PriceList1;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("PriceList 1")]
         [Index(5), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwPriceList PriceList1
@@ -75,6 +76,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwPriceList _PriceList2;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("PriceList 2")]
         [Index(8), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwPriceList PriceList2
@@ -88,6 +90,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwPriceList _PriceList3;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("PriceList 3")]
         [Index(9), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwPriceList PriceList3
@@ -101,6 +104,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwPriceList _PriceList4;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("PriceList 4")]
         [Index(10), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwPriceList PriceList4
@@ -114,6 +118,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwWarehouse _Stock1;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("Stock 1")]
         [Index(11), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwWarehouse Stock1
@@ -127,6 +132,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwWarehouse _Stock2;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("Stock 2")]
         [Index(13), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwWarehouse Stock2
@@ -141,6 +147,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
         // Start ver 1.0.8
         private vwWarehouse _Stock3;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("Stock 3")]
         [Index(14), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwWarehouse Stock3
@@ -154,6 +161,7 @@ namespace StarLaiPortal.Module.BusinessObjects.Setup
 
         private vwWarehouse _Stock4;
         [NoForeignKey]
+        [LookupEditorMode(LookupEditorMode.AllItems)]
         [XafDisplayName("Stock 4")]
         [Index(15), VisibleInDetailView(true), VisibleInListView(true), VisibleInLookupListView(true)]
         public vwWarehouse Stock4

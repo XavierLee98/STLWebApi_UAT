@@ -13,6 +13,8 @@ using DevExpress.ExpressApp.Web;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using StarLaiPortal.Module.BusinessObjects;
+using StarLaiPortal.Module.BusinessObjects.Inquiry_View;
+using StarLaiPortal.Module.BusinessObjects.Pick_List;
 using StarLaiPortal.Module.BusinessObjects.Sales_Return;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web;
+
+// 2023-08-18 - add print credit memo - ver 1.0.8
 
 namespace StarLaiPortal.Module.Controllers
 {
@@ -40,6 +44,9 @@ namespace StarLaiPortal.Module.Controllers
             this.SubmitSR.Active.SetItemValue("Enabled", false);
             this.CancelSR.Active.SetItemValue("Enabled", false);
             this.PreviewSR.Active.SetItemValue("Enabled", false);
+            // Start ver 1.0.8
+            this.PrintCreditMemo.Active.SetItemValue("Enabled", false);
+            // End ver 1.0.8
         }
         protected override void OnViewControlsCreated()
         {
@@ -68,7 +75,30 @@ namespace StarLaiPortal.Module.Controllers
                 this.CancelSR.Active.SetItemValue("Enabled", false);
                 this.PreviewSR.Active.SetItemValue("Enabled", false);
             }
+
+            // Start ver 1.0.8
+            if (View.Id == "vwInquiryCreditMemo_DetailView")
+            {
+                if (((DetailView)View).ViewEditMode == ViewEditMode.View)
+                {
+                    this.PrintCreditMemo.Active.SetItemValue("Enabled", true);
+                }
+                else
+                {
+                    this.PrintCreditMemo.Active.SetItemValue("Enabled", false);
+                }
+            }
+            else if (View.Id == "vwInquiryCreditMemo_ListView")
+            {
+                this.PrintCreditMemo.Active.SetItemValue("Enabled", true);
+            }
+            else
+            {
+                this.PrintCreditMemo.Active.SetItemValue("Enabled", true);
+            }
+            // End ver 1.0.8
         }
+
         protected override void OnDeactivated()
         {
             // Unsubscribe from previously subscribed events and release other references and resources.
@@ -245,5 +275,74 @@ namespace StarLaiPortal.Module.Controllers
                 showMsg("Fail", ex.Message, InformationType.Error);
             }
         }
+
+        // Start ver 1.0.8
+        private void PrintCreditMemo_Execute(object sender, SimpleActionExecuteEventArgs e)
+        {
+            if (e.SelectedObjects.Count >= 1)
+            {
+                SqlConnection conn = new SqlConnection(genCon.getConnectionString());
+                ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
+                int cnt = 1;
+                foreach (vwInquiryCreditMemo dtl in e.SelectedObjects)
+                {
+                    string strServer;
+                    string strDatabase;
+                    string strUserID;
+                    string strPwd;
+                    string filename;
+
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    vwInquiryCreditMemo cn = os.FindObject<vwInquiryCreditMemo>(new BinaryOperator("PriKey", dtl.PriKey));
+
+                    try
+                    {
+                        ReportDocument doc = new ReportDocument();
+                        strServer = ConfigurationManager.AppSettings.Get("SQLserver").ToString();
+                        doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\CreditMemo.rpt"));
+                        strDatabase = conn.Database;
+                        strUserID = ConfigurationManager.AppSettings.Get("SQLID").ToString();
+                        strPwd = ConfigurationManager.AppSettings.Get("SQLPass").ToString();
+                        doc.DataSourceConnections[0].SetConnection(strServer, strDatabase, strUserID, strPwd);
+                        doc.Refresh();
+
+                        doc.SetParameterValue("dockey@", cn.DocKey);
+                        //doc.SetParameterValue("dbName@", conn.Database);
+
+                        filename = ConfigurationManager.AppSettings.Get("ReportPath").ToString() + conn.Database
+                            + "_" + cn.DocKey + "_" + user.UserName + "_InquiryCN_"
+                            + ".pdf";
+
+                        doc.ExportToDisk(ExportFormatType.PortableDocFormat, filename);
+                        doc.Close();
+                        doc.Dispose();
+
+                        string url = HttpContext.Current.Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority +
+                            ConfigurationManager.AppSettings.Get("PrintPath").ToString() + conn.Database
+                            + "_" + cn.DocKey + "_" + user.UserName + "_InquiryCN_"
+                            + ".pdf";
+                        var script = "window.open('" + url + "');";
+
+                        WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile" + cnt, script);
+
+                        //pl.PrintStatus = PrintStatus.Printed;
+                        //pl.PrintCount++;
+
+                        //os.CommitChanges();
+                        //os.Refresh();
+                        cnt++;
+                    }
+                    catch (Exception ex)
+                    {
+                        showMsg("Fail", ex.Message, InformationType.Error);
+                    }
+                }
+            }
+            else
+            {
+                showMsg("Fail", "Please select data to print.", InformationType.Error);
+            }
+        }
+        // End ver 1.0.8
     }
 }

@@ -673,8 +673,7 @@ namespace StarLaiPortal.Module.Controllers
                                         {
                                             foreach (PickListDetails dtlpick in picklist.PickListDetails)
                                             {
-                                                if (dtlpack.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&  dtlpick.SOBaseDoc == so.DocNum &&
-                                                    dtlpick.Oid.ToString() == dtlpack.BaseId)
+                                                if (dtlpack.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&  dtlpick.SOBaseDoc == so.DocNum)
                                                 {
                                                     if (dtlpick.PickQty > 0)
                                                     {

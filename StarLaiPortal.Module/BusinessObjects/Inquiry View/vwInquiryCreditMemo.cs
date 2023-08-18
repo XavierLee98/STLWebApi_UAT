@@ -259,5 +259,13 @@ namespace StarLaiPortal.Module.BusinessObjects.Inquiry_View
         {
             get; set;
         }
+
+        [XafDisplayName("DocKey")]
+        [Appearance("DocKey", Enabled = false)]
+        [Index(65), VisibleInDetailView(false), VisibleInListView(false), VisibleInLookupListView(false)]
+        public string DocKey
+        {
+            get; set;
+        }
     }
 }
