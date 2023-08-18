@@ -326,6 +326,7 @@ namespace StarLaiPortal.Module.Controllers
                                                 newdeliveryitem.BaseDoc = selectedObject.DocNum.ToString();
                                                 newdeliveryitem.BaseId = dtlload.Oid.ToString();
                                                 newdeliveryitem.SODocNum = reader.GetString(0);
+                                                newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
                                                 newdeliveryitem.PickListDocNum = dtlpack.PickListNo;
 
                                                 newdelivery.DeliveryOrderDetails.Add(newdeliveryitem);

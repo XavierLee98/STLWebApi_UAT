@@ -518,6 +518,7 @@ namespace StarLaiPortal.Module.Controllers
                                                 newdeliveryitem.BaseDoc = load.DocNum.ToString();
                                                 newdeliveryitem.BaseId = dtlload.Oid.ToString();
                                                 newdeliveryitem.SODocNum = reader.GetString(0);
+                                                newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
                                                 newdeliveryitem.PickListDocNum = dtlpack.PickListNo;
 
                                                 newdelivery.DeliveryOrderDetails.Add(newdeliveryitem);
@@ -708,6 +709,7 @@ namespace StarLaiPortal.Module.Controllers
                                                         newdeliveryitem.BaseDoc = newload.DocNum.ToString();
                                                         newdeliveryitem.BaseId = dtlload.Oid.ToString();
                                                         newdeliveryitem.SODocNum = reader1.GetString(0);
+                                                        newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
                                                         newdeliveryitem.PickListDocNum = dtlpack.PickListNo;
                                                         newdeliveryitem.PackListLine = dtlpack.Oid.ToString();
 

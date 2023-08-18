@@ -94,7 +94,7 @@ namespace StarLaiPortal.Module.Controllers
             }
             else
             {
-                this.PrintCreditMemo.Active.SetItemValue("Enabled", true);
+                this.PrintCreditMemo.Active.SetItemValue("Enabled", false);
             }
             // End ver 1.0.8
         }
