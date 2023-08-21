@@ -677,11 +677,22 @@ namespace StarLaiPortal.Module.Controllers
 
                                     foreach (PackListDetails dtlpack in newpack.PackListDetails)
                                     {
+                                        int picklistoid = 0;
                                         if (dtlpack.Bundle.BundleID == dtlload.Bundle.BundleID)
                                         {
+                                            foreach (PickListDetailsActual dtlactual in picklist.PickListDetailsActual)
+                                            {
+                                                if (dtlpack.BaseId == dtlactual.Oid.ToString())
+                                                {
+                                                    picklistoid = dtlactual.PickListDetailOid;
+                                                    break;
+                                                }
+                                            }
+
                                             foreach (PickListDetails dtlpick in picklist.PickListDetails)
                                             {
-                                                if (dtlpack.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&  dtlpick.SOBaseDoc == so.DocNum)
+                                                if (dtlpack.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&  dtlpick.SOBaseDoc == so.DocNum && 
+                                                    dtlpick.Oid == picklistoid)
                                                 {
                                                     if (dtlpick.PickQty > 0)
                                                     {
