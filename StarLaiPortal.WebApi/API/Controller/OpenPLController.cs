@@ -43,17 +43,9 @@ namespace StarLaiPortal.WebApi.API.Controller
         {
             try
             {
-                //using IObjectSpace newObjectSpace = objectSpaceFactory.CreateObjectSpace<vwOpenSO>();
                 ISecurityStrategyBase security = securityProvider.GetSecurity();
                 var userId = security.UserId;
                 var userName = security.UserName;
-                //ApplicationUser user = newObjectSpace.GetObjectByKey<ApplicationUser>(userId);
-
-                //List<vwOpenSO> obj = newObjectSpace.GetObjects<vwOpenSO>().ToList();
-                //var rtn = obj.Select(pp => new { OID = pp.PriKey, Cart = pp.Cart, Customer = pp.Customer, ContactNo = pp.ContactNo, DocNum = pp.DocNum, CreateDate = pp.CreateDate });
-                ////return Ok(rtn.ToList());
-                //string json = JsonConvert.SerializeObject(rtn, Formatting.Indented);
-                //return Ok(json);
 
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
@@ -90,18 +82,6 @@ namespace StarLaiPortal.WebApi.API.Controller
         {
             try
             {
-                //using IObjectSpace newObjectSpace = objectSpaceFactory.CreateObjectSpace<SalesOrderDetails>();
-                //ISecurityStrategyBase security = securityProvider.GetSecurity();
-                //var userId = security.UserId;
-                //var userName = security.UserName;
-                //ApplicationUser user = newObjectSpace.GetObjectByKey<ApplicationUser>(userId);
-
-                //List<SalesOrderDetails> obj = newObjectSpace.GetObjects<SalesOrderDetails>(CriteriaOperator.Parse("SalesOrder=?", oid)).ToList();
-                //var rtn = obj.Select(pp => new { OID = pp.Oid, ItemCode = pp.ItemCode, ItemDesc = pp.ItemDesc, Model = pp.Model, Location = pp.Location.WarehouseCode, Quantity = pp.Quantity });
-                ////return Ok(rtn.ToList());
-                //string json = JsonConvert.SerializeObject(rtn, Formatting.Indented);
-                //return Ok(json);
-
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
                     string json = JsonConvert.SerializeObject(new { oid = oid });
@@ -135,20 +115,23 @@ namespace StarLaiPortal.WebApi.API.Controller
 
                 if (detailsObject != null)
                 {
-                    var isValid = true;
-
-                    foreach (var x in detailsObject)
+                    using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                     {
-                        if (string.IsNullOrEmpty(x.ToBin))
+                        foreach (var line in detailsObject)
                         {
-                            isValid = false;
-                            break;
-                        }
-                    }
+                            if (string.IsNullOrEmpty(line.ToBin))
+                            {
+                                return Problem("The ToBin value is null. Please select Tobin.");
+                            }
 
-                    if (!isValid)
-                    {
-                        return Problem("The ToBin value is null. Please select Tobin.");
+                            string json = JsonConvert.SerializeObject(new { itemcode = line.ItemCode, bincode = line.FromBin, quantity = line.PickQty });
+
+                            var validateBalance = conn.Query<ValidateJson>($"exec sp_beforedatasave 'ValidateStockBalance', '{json}'").FirstOrDefault();
+                            if (validateBalance.Error)
+                            {
+                                return Problem(validateBalance.ErrorMessage);
+                            }
+                        }
                     }
                 }
                 else
