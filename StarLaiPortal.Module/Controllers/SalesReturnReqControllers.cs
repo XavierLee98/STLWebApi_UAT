@@ -248,6 +248,7 @@ namespace StarLaiPortal.Module.Controllers
                                 srr.Salesperson = ObjectSpace.FindObject<vwSalesPerson>(CriteriaOperator.Parse("SlpName = ?", dtl.Salesperson));
                             }
 
+                            srr.CustomerName = dtl.CardName;
                             SalesReturnRequestDetails newsrritem = ObjectSpace.CreateObject<SalesReturnRequestDetails>();
 
                             newsrritem.ItemCode = newsrritem.Session.GetObjectByKey<vwItemMasters>(dtl.ItemCode);

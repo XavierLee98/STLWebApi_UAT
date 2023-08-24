@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-22 add cancel and close button ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Sales_Order
 {
     [DefaultClassOptions]
@@ -25,6 +27,10 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order
     [Appearance("HideNew", AppearanceItemType = "Action", TargetItems = "New", Context = "Any", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide)]
     [Appearance("HideEdit", AppearanceItemType.Action, "True", TargetItems = "SwitchToEditMode; Edit", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
     [Appearance("HideDelete", AppearanceItemType.Action, "True", TargetItems = "Delete", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    // Start ver 1.0.9
+    [Appearance("HideCancel", AppearanceItemType.Action, "True", TargetItems = "CancelSO", Criteria = "not (Status in (6)) or Sap = 'False'", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    [Appearance("HideClose", AppearanceItemType.Action, "True", TargetItems = "CloseSO", Criteria = "not (Status in (6)) or Sap = 'False'", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    // End ver 1.0.9
 
     public class SalesOrder : XPObject
     { // Inherit from a different class to provide a custom primary key, concurrency and deletion behavior, etc. (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument113146.aspx).
@@ -575,6 +581,56 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order
                 SetPropertyValue("Sap", ref _Sap, value);
             }
         }
+
+        // Start ver 1.0.9
+        private bool _PendingCancel;
+        [XafDisplayName("PendingCancel")]
+        [Index(81), VisibleInDetailView(false), VisibleInListView(false), VisibleInLookupListView(false)]
+        public bool PendingCancel
+        {
+            get { return _PendingCancel; }
+            set
+            {
+                SetPropertyValue("PendingCancel", ref _PendingCancel, value);
+            }
+        }
+
+        private bool _SapCancel;
+        [XafDisplayName("SapCancel")]
+        [Index(82), VisibleInDetailView(false), VisibleInListView(false), VisibleInLookupListView(false)]
+        public bool SapCancel
+        {
+            get { return _SapCancel; }
+            set
+            {
+                SetPropertyValue("SapCancel", ref _SapCancel, value);
+            }
+        }
+
+        private bool _PendingClose;
+        [XafDisplayName("PendingClose")]
+        [Index(83), VisibleInDetailView(false), VisibleInListView(false), VisibleInLookupListView(false)]
+        public bool PendingClose
+        {
+            get { return _PendingClose; }
+            set
+            {
+                SetPropertyValue("PendingClose", ref _PendingClose, value);
+            }
+        }
+
+        private bool _SapClose;
+        [XafDisplayName("SapClose")]
+        [Index(84), VisibleInDetailView(false), VisibleInListView(false), VisibleInLookupListView(false)]
+        public bool SapClose
+        {
+            get { return _SapClose; }
+            set
+            {
+                SetPropertyValue("SapClose", ref _SapClose, value);
+            }
+        }
+        // End ver 1.0.9
 
         [Browsable(false)]
         public bool IsNew

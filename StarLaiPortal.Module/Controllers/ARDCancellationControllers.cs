@@ -161,6 +161,8 @@ namespace StarLaiPortal.Module.Controllers
                                 ardpc.ContactPerson = ObjectSpace.FindObject<vwSalesPerson>(CriteriaOperator.Parse("SlpName = ?", dtl.Salesperson));
                             }
 
+                            ardpc.CustomerName = dtl.CardName;
+
                             ARDownpaymentCancelDetails newardpcitem = ObjectSpace.CreateObject<ARDownpaymentCancelDetails>();
 
                             newardpcitem.ItemCode = newardpcitem.Session.GetObjectByKey<vwItemMasters>(dtl.ItemCode);

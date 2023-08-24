@@ -412,6 +412,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Approvals_ListView" DataAccessMode="Server" />
     <DetailView Id="ApprovalUsers_DetailView" AllowEdit="False" />
     <ListView Id="ARDownpaymentCancel_ARDownpaymentCancelDetails_ListView" AllowEdit="True" />
     <ListView Id="ARDownpaymentCancel_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
@@ -523,13 +524,13 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="ARDownpaymentCancel_ListView">
+    <ListView Id="ARDownpaymentCancel_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="CancelDate" Index="-1" />
         <ColumnInfo Id="Reference" Index="9" />
       </Columns>
     </ListView>
-    <ListView Id="ARDownpaymentCancel_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation.ARDownpaymentCancel" Caption="AR Downpayment Cancellation Approval" DetailViewID="ARDownpaymentCancel_DetailView_Approval" MasterDetailView="ARDownpaymentCancel_DetailView" IsNewNode="True">
+    <ListView Id="ARDownpaymentCancel_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Credit_Notes_Cancellation.ARDownpaymentCancel" Caption="AR Downpayment Cancellation Approval" DetailViewID="ARDownpaymentCancel_DetailView_Approval" MasterDetailView="ARDownpaymentCancel_DetailView" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="CreateDate" PropertyName="CreateDate" Index="-1" IsNewNode="True" />
@@ -713,6 +714,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="ASN_ListView" DataAccessMode="Server" />
     <DetailView Id="ASNDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -738,8 +740,9 @@
     </DetailView>
     <DetailView Id="AuditDataItemPersistent_DetailView" AllowEdit="False" />
     <ListView Id="BundleType_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="BundleType_ListView" DataAccessMode="Server" />
     <DetailView Id="Dashboards_DetailView" AllowEdit="False" />
-    <ListView Id="Dashboards_ListView" IsGroupPanelVisible="True" ShowAutoFilterRow="False">
+    <ListView Id="Dashboards_ListView" IsGroupPanelVisible="True" ShowAutoFilterRow="False" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="PendingTransaction" Width="71" SortOrder="Ascending" GroupIndex="-1" Index="-1" SortIndex="1" />
         <ColumnInfo Id="DashboardType" SortOrder="Ascending" GroupIndex="1" />
@@ -846,6 +849,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="DeliveryOrder_ListView" DataAccessMode="Server" />
     <DetailView Id="DeliveryOrderDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -870,6 +874,7 @@
     </DetailView>
     <ListView Id="DeliveryOrderDetails_ListView" AllowEdit="False" />
     <ListView Id="DiscrepancyReason_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="DiscrepancyReason_ListView" DataAccessMode="Server" />
     <ListView Id="DocTypes_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
       <Columns>
         <ColumnInfo Id="PropertyName" Index="-1" />
@@ -879,6 +884,7 @@
         <ColumnInfo Id="NewValue" Index="4" />
       </Columns>
     </ListView>
+    <ListView Id="DocTypes_ListView" DataAccessMode="Server" />
     <ListView Id="GRN_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
       <Columns>
         <ColumnInfo Id="PropertyName" Index="-1" />
@@ -1016,6 +1022,7 @@
       </Layout>
     </DetailView>
     <ListView Id="GRN_GRNDetails_ListView" AllowEdit="True" />
+    <ListView Id="GRN_ListView" DataAccessMode="Server" />
     <DetailView Id="GRNDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -1247,6 +1254,7 @@
       </Columns>
       <SplitLayout Direction="Vertical" IsNewNode="True" />
     </ListView>
+    <ListView Id="ItemInquiry_ListView" DataAccessMode="Server" />
     <ListView Id="ItemInquiry_ListView_Report" ClassName="StarLaiPortal.Module.BusinessObjects.Item_Inquiry.ItemInquiry" DetailViewID="ItemInquiry_DetailView_Report" MasterDetailView="ItemInquiry_DetailView" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="CardCode" PropertyName="CardCode" Index="-1" IsNewNode="True" />
@@ -1271,6 +1279,7 @@
       </Columns>
     </ListView>
     <ListView Id="ItemInquiryDefault_AuditTrail_ListView" AllowDelete="False" AllowEdit="True" AllowLink="False" AllowNew="False" />
+    <ListView Id="ItemInquiryDefault_ListView" DataAccessMode="Server" />
     <DetailView Id="ItemInquiryDetails_DetailView" AllowEdit="False" DefaultFocusedItem="">
       <Items>
         <StaticText Id="Balance" Text="Balance" Caption="Balance" IsNewNode="True" />
@@ -1470,6 +1479,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Load_ListView" DataAccessMode="Server" />
     <DetailView Id="LoadDetails_DetailView" AllowEdit="False" />
     <ListView Id="PackList_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
       <Columns>
@@ -1526,7 +1536,9 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="PackList_ListView" DataAccessMode="Server" />
     <ListView Id="PaymentType_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="PaymentType_ListView" DataAccessMode="Server" />
     <DetailView Id="PermissionPolicyRole_DetailView" AllowDelete="True" />
     <ListView Id="PermissionPolicyUser_Roles_ListView" AllowDelete="False" AllowUnlink="True" />
     <ListView Id="PickList_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
@@ -1683,7 +1695,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="PickList_ListView">
+    <ListView Id="PickList_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="PrintStatus" Index="13" />
         <ColumnInfo Id="PrintCount" Index="14" />
@@ -1752,6 +1764,7 @@
       </Columns>
     </ListView>
     <ListView Id="PriorityType_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="PriorityType_ListView" FreezeColumnIndices="False" DataAccessMode="Server" />
     <DetailView Id="PurchaseOrderDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -2076,7 +2089,8 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="PurchaseOrders_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Purchase_Order.PurchaseOrders" Caption="Purchase Order Approval" DetailViewID="PurchaseOrders_DetailView_Approval" MasterDetailView="PurchaseOrders_DetailView" IsNewNode="True">
+    <ListView Id="PurchaseOrders_ListView" DataAccessMode="Server" />
+    <ListView Id="PurchaseOrders_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Purchase_Order.PurchaseOrders" Caption="Purchase Order Approval" DetailViewID="PurchaseOrders_DetailView_Approval" MasterDetailView="PurchaseOrders_DetailView" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="BillingAddress" PropertyName="BillingAddress" Index="-1" IsNewNode="True" />
@@ -2387,7 +2401,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="PurchaseReturnRequests_ListView">
+    <ListView Id="PurchaseReturnRequests_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="ReasonCode" Index="-1" />
         <ColumnInfo Id="DocDate" Index="4" />
@@ -2398,7 +2412,7 @@
         <ColumnInfo Id="Reference" Index="9" />
       </Columns>
     </ListView>
-    <ListView Id="PurchaseReturnRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Purchase_Return.PurchaseReturnRequests" Caption="Purchase Return Request Approval" IsNewNode="True">
+    <ListView Id="PurchaseReturnRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Purchase_Return.PurchaseReturnRequests" Caption="Purchase Return Request Approval" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="BillingAddress" PropertyName="BillingAddress" Index="-1" IsNewNode="True" />
@@ -2575,7 +2589,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="PurchaseReturns_ListView">
+    <ListView Id="PurchaseReturns_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="ReasonCode" Index="-1" />
         <ColumnInfo Id="DocDate" Index="5" />
@@ -2784,6 +2798,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="SalesOrder_ListView" DataAccessMode="Server" />
     <ListView Id="SalesOrderCollection_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
       <Columns>
         <ColumnInfo Id="PropertyName" Index="-1" />
@@ -2906,6 +2921,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="SalesOrderCollection_ListView" DataAccessMode="Server" />
     <ListView Id="SalesOrderCollection_SalesOrderCollectionDetails_ListView" AllowEdit="True" />
     <DetailView Id="SalesOrderCollectionDetails_DetailView" AllowEdit="True" />
     <ListView Id="SalesQuotation_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False">
@@ -3192,7 +3208,8 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="SalesQuotation_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Quotation.SalesQuotation" Caption="Sales Quotation Approval" DetailViewID="SalesQuotation_DetailView_Approval" MasterDetailView="SalesQuotation_DetailView" IsNewNode="True">
+    <ListView Id="SalesQuotation_ListView" DataAccessMode="Server" />
+    <ListView Id="SalesQuotation_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Quotation.SalesQuotation" Caption="Sales Quotation Approval" DetailViewID="SalesQuotation_DetailView_Approval" MasterDetailView="SalesQuotation_DetailView" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="Balance" PropertyName="Balance" Index="-1" IsNewNode="True" />
@@ -3486,7 +3503,8 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="SalesRefundRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Refund.SalesRefundRequests" MasterDetailView="SalesRefundRequests_DetailView" Caption="Manual Credit Note Request Approval" DetailViewID="SalesRefundRequests_DetailView_Approval" IsNewNode="True">
+    <ListView Id="SalesRefundRequests_ListView" DataAccessMode="Server" />
+    <ListView Id="SalesRefundRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Refund.SalesRefundRequests" MasterDetailView="SalesRefundRequests_DetailView" Caption="Manual Credit Note Request Approval" DetailViewID="SalesRefundRequests_DetailView_Approval" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="CopyTo" PropertyName="CopyTo" Index="-1" IsNewNode="True" />
@@ -3596,6 +3614,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="SalesRefunds_ListView" DataAccessMode="Server" />
     <DetailView Id="SalesReturnDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -3897,7 +3916,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="SalesReturnRequests_ListView">
+    <ListView Id="SalesReturnRequests_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="ReasonCode" Index="-1" />
         <ColumnInfo Id="DocDate" Index="4" />
@@ -3908,7 +3927,7 @@
         <ColumnInfo Id="Reference" Index="9" />
       </Columns>
     </ListView>
-    <ListView Id="SalesReturnRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Return.SalesReturnRequests" DetailViewID="SalesReturnRequests_DetailView_Approval" MasterDetailView="SalesReturnRequests_DetailView" IsNewNode="True">
+    <ListView Id="SalesReturnRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Sales_Return.SalesReturnRequests" DetailViewID="SalesReturnRequests_DetailView_Approval" MasterDetailView="SalesReturnRequests_DetailView" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="BillingAddress" PropertyName="BillingAddress" Index="-1" IsNewNode="True" />
@@ -4090,7 +4109,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="SalesReturns_ListView">
+    <ListView Id="SalesReturns_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="ReasonCode" Index="-1" />
         <ColumnInfo Id="DocDate" Index="4" />
@@ -4103,7 +4122,9 @@
     </ListView>
     <ListView Id="SalesReturns_SalesReturnDetails_ListView" AllowEdit="True" />
     <ListView Id="Series_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="Series_ListView" DataAccessMode="Server" />
     <ListView Id="StaffInfo_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="StaffInfo_ListView" DataAccessMode="Server" />
     <DetailView Id="StockAdjustmentDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -4333,7 +4354,8 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="StockAdjustmentRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Stock_Adjustment.StockAdjustmentRequests" MasterDetailView="StockAdjustmentRequests_DetailView" Caption="Stock Adjustment Request Approval" DetailViewID="StockAdjustmentRequests_DetailView_Approval" IsNewNode="True">
+    <ListView Id="StockAdjustmentRequests_ListView" DataAccessMode="Server" />
+    <ListView Id="StockAdjustmentRequests_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Stock_Adjustment.StockAdjustmentRequests" MasterDetailView="StockAdjustmentRequests_DetailView" Caption="Stock Adjustment Request Approval" DetailViewID="StockAdjustmentRequests_DetailView_Approval" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="CopyTo" PropertyName="CopyTo" Index="-1" IsNewNode="True" />
@@ -4409,35 +4431,60 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="StockAdjustments_ListView" DataAccessMode="Server" />
     <ListView Id="StockAdjustments_StockAdjustmentDetails_ListView" AllowEdit="True" />
     <ListView Id="Transporter_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />
+    <ListView Id="Transporter_ListView" DataAccessMode="Server" />
     <DetailView Id="vwASN_DetailView" AllowEdit="False" />
+    <ListView Id="vwASN_ListView" DataAccessMode="Server" />
     <DetailView Id="vwASNDetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwASNDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwBank_DetailView" AllowEdit="False" />
+    <ListView Id="vwBank_ListView" DataAccessMode="Server" />
     <DetailView Id="vwBillingAddress_DetailView" AllowEdit="False" />
+    <ListView Id="vwBillingAddress_ListView" DataAccessMode="Server" />
     <DetailView Id="vwBin_DetailView" AllowEdit="False" />
+    <ListView Id="vwBin_ListView" DataAccessMode="Server" />
     <DetailView Id="vwBinStockBalance_DetailView" AllowEdit="False" />
+    <ListView Id="vwBinStockBalance_ListView" DataAccessMode="Server" />
     <DetailView Id="vwBusniessPartner_DetailView" AllowEdit="False" />
+    <ListView Id="vwBusniessPartner_ListView" DataAccessMode="Server" />
     <DetailView Id="vwDepartment_DetailView" AllowEdit="False" />
+    <ListView Id="vwDepartment_ListView" DataAccessMode="Server" />
     <DetailView Id="vwDownpaymentINV_DetailView" AllowEdit="False" />
+    <ListView Id="vwDownpaymentINV_ListView" DataAccessMode="Server" />
     <DetailView Id="vwDownpaymentINVGroup_DetailView" AllowEdit="False" />
+    <ListView Id="vwDownpaymentINVGroup_ListView" DataAccessMode="Server" />
     <DetailView Id="vwDriver_DetailView" AllowEdit="False" />
+    <ListView Id="vwDriver_ListView" DataAccessMode="Server" />
     <DetailView Id="vwExchangeRate_DetailView" AllowEdit="False" />
+    <ListView Id="vwExchangeRate_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryARDownpayment_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryARDownpayment_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryASN_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryASN_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryBundleID_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryBundleID_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryBundleTransferDetails_DetailView" AllowEdit="False" />
     <DetailView Id="vwInquiryCreditMemo_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryCreditMemo_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryCurrentARAging_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryCurrentARAging_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryDelivery_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryDelivery_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryGRN_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryGRN_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryInvoice_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryInvoice_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryLoading_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryLoading_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryLoadingDetails_DetailView" AllowEdit="False" />
     <DetailView Id="vwInquiryOpenBundleTransferDetails_DetailView" AllowDelete="True" AllowEdit="False" />
+    <ListView Id="vwInquiryOpenBundleTransferDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryOpenPickList_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryOpenPickList_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryOrderTemplateMapping_DetailView" AllowEdit="False" />
-    <ListView Id="vwInquiryOrderTemplateMapping_ListView">
+    <ListView Id="vwInquiryOrderTemplateMapping_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="OldCode" Index="0" />
         <ColumnInfo Id="ItemNo" Index="1" />
@@ -4450,31 +4497,53 @@
       </Columns>
     </ListView>
     <DetailView Id="vwInquiryPackList_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryPackList_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryPickList_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryPickList_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryPickListDetails_DetailView" AllowEdit="False" />
     <DetailView Id="vwInquiryPurchaseOrders_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryPurchaseOrders_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryPurchaseReturn_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryPurchaseReturn_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquirySalesOrder_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquirySalesOrder_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquirySalesOrderDetails_DetailView" AllowEdit="False" />
     <DetailView Id="vwInquirySalesQuotation_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquirySalesQuotation_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquirySalesQuotationDetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquirySalesQuotationDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquirySalesReturnRequestDetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquirySalesReturnRequestDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockAdjustmentDetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockAdjustmentDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockBalance_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockBalance_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockBalancebyWhs_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockBalancebyWhs_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockBalanceTransfer_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockBalanceTransfer_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockMovement_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockMovement_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryStockReordering_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryStockReordering_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInquiryWarehouseTransferDetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwInquiryWarehouseTransferDetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwInvoice_DetailView" AllowEdit="False" />
+    <ListView Id="vwInvoice_ListView" DataAccessMode="Server" />
     <DetailView Id="vwItemMasters_DetailView" AllowEdit="False" />
+    <ListView Id="vwItemMasters_ListView" DataAccessMode="Server" />
     <DetailView Id="vwLastPurchasePrice_DetailView" AllowEdit="False" />
+    <ListView Id="vwLastPurchasePrice_ListView" DataAccessMode="Server" />
     <DetailView Id="vwLoadingSO_DetailView" AllowEdit="False" />
+    <ListView Id="vwLoadingSO_ListView" DataAccessMode="Server" />
     <DetailView Id="vwLocalBank_DetailView" AllowEdit="False" />
+    <ListView Id="vwLocalBank_ListView" DataAccessMode="Server" />
     <DetailView Id="vwOpenSO_DetailView" AllowEdit="False" />
+    <ListView Id="vwOpenSO_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPackList_DetailView" AllowEdit="False" />
+    <ListView Id="vwPackList_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPaymentSO_DetailView" AllowEdit="False" />
-    <ListView Id="vwPaymentSO_ListView">
+    <ListView Id="vwPaymentSO_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="DeliveryDate" Index="-1" />
         <ColumnInfo Id="PartialPicked" Index="-1" />
@@ -4494,7 +4563,7 @@
       </Columns>
     </ListView>
     <DetailView Id="vwPaymentSOGroup_DetailView" AllowEdit="False" />
-    <ListView Id="vwPaymentSOGroup_ListView">
+    <ListView Id="vwPaymentSOGroup_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="DeliveryDate" Index="-1" />
         <ColumnInfo Id="PostingDate" Index="-1" />
@@ -4509,12 +4578,17 @@
       </Columns>
     </ListView>
     <DetailView Id="vwPaymentTerm_DetailView" AllowEdit="False" />
+    <ListView Id="vwPaymentTerm_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPaymentType_DetailView" AllowEdit="False" />
+    <ListView Id="vwPaymentType_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPickList_DetailView" AllowEdit="False" />
+    <ListView Id="vwPickList_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPO_DetailView" AllowEdit="False" />
+    <ListView Id="vwPO_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPODetails_DetailView" AllowEdit="False" />
+    <ListView Id="vwPODetails_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPOSO_DetailView" AllowEdit="False" />
-    <ListView Id="vwPOSO_ListView">
+    <ListView Id="vwPOSO_ListView" DataAccessMode="Server">
       <Columns>
         <ColumnInfo Id="DeliveryDate" Index="-1" />
         <ColumnInfo Id="PostingDate" Index="-1" />
@@ -4532,16 +4606,29 @@
       </Columns>
     </ListView>
     <DetailView Id="vwPrice_DetailView" AllowEdit="False" />
+    <ListView Id="vwPrice_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPriceList_DetailView" AllowEdit="False" />
+    <ListView Id="vwPriceList_ListView" DataAccessMode="Server" />
+    <ListView Id="vwPriceWithVolumeDiscount_ListView" DataAccessMode="Server" />
+    <ListView Id="vwPrintLabelDoc_ListView" DataAccessMode="Server" />
     <DetailView Id="vwPRRPO_DetailView" AllowEdit="False" />
+    <ListView Id="vwPRRPO_ListView" DataAccessMode="Server" />
     <DetailView Id="vwReasonCode_DetailView" AllowEdit="False" />
+    <ListView Id="vwReasonCode_ListView" DataAccessMode="Server" />
     <DetailView Id="vwSalesPerson_DetailView" AllowEdit="False" />
+    <ListView Id="vwSalesPerson_ListView" DataAccessMode="Server" />
     <DetailView Id="vwSeries_DetailView" AllowEdit="False" />
+    <ListView Id="vwSeries_ListView" DataAccessMode="Server" />
     <DetailView Id="vwShippingAddress_DetailView" AllowEdit="False" />
+    <ListView Id="vwShippingAddress_ListView" DataAccessMode="Server" />
     <DetailView Id="vwStockBalance_DetailView" AllowEdit="False" />
+    <ListView Id="vwStockBalance_ListView" DataAccessMode="Server" />
     <DetailView Id="vwTransporter_DetailView" AllowEdit="False" />
+    <ListView Id="vwTransporter_ListView" DataAccessMode="Server" />
     <DetailView Id="vwVehicle_DetailView" AllowEdit="False" />
+    <ListView Id="vwVehicle_ListView" DataAccessMode="Server" />
     <DetailView Id="vwWarehouse_DetailView" AllowEdit="False" />
+    <ListView Id="vwWarehouse_ListView" DataAccessMode="Server" />
     <DetailView Id="WarehouseTransferDetails_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -4767,7 +4854,8 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="WarehouseTransferReq_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer.WarehouseTransferReq" MasterDetailView="WarehouseTransferReq_DetailView" Caption="Warehouse Transfer Request Approval" DetailViewID="WarehouseTransferReq_DetailView_Approval" IsNewNode="True">
+    <ListView Id="WarehouseTransferReq_ListView" DataAccessMode="Server" />
+    <ListView Id="WarehouseTransferReq_ListView_Approval" ClassName="StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer.WarehouseTransferReq" MasterDetailView="WarehouseTransferReq_DetailView" Caption="Warehouse Transfer Request Approval" DetailViewID="WarehouseTransferReq_DetailView_Approval" DataAccessMode="Server" IsNewNode="True">
       <Columns IsNewNode="True">
         <ColumnInfo Id="AppUser" PropertyName="AppUser" Index="-1" IsNewNode="True" />
         <ColumnInfo Id="CopyTo" PropertyName="CopyTo" Index="-1" IsNewNode="True" />
@@ -4911,6 +4999,7 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="WarehouseTransfers_ListView" DataAccessMode="Server" />
     <ListView Id="WarehouseTransfers_WarehouseTransferDetails_ListView" AllowEdit="True" />
   </Views>
 </Application>

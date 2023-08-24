@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 
 // 2023-07-28 add GRPO Correction ver 1.0.7
 // 2023-08-16 temporary fix glaccount ver 1.0.8
+// 2023-08-22 add cancel and close button ver 1.0.9
 
 namespace PortalIntegration
 {
@@ -360,66 +361,6 @@ namespace PortalIntegration
                     #endregion
 
                     WriteLog("[INFO]", "--Sales Return Posting End--");
-                }
-
-                temp = ConfigurationManager.AppSettings["WhsTransferPost"].ToString().ToUpper();
-                if (temp == "Y" || temp == "YES" || temp == "TRUE" || temp == "1")
-                {
-                    WriteLog("[INFO]", "--Warehouse Transfer Posting Start--");
-
-                    #region Warehouse Transfer
-                    IList<WarehouseTransfers> wtlist = ListObjectSpace.GetObjects<WarehouseTransfers>
-                        (CriteriaOperator.Parse("Sap = ? and Status = ?", 0, 1));
-
-                    foreach (WarehouseTransfers dtlwt in wtlist)
-                    {
-                        try
-                        {
-                            IObjectSpace wtos = ObjectSpaceProvider.CreateObjectSpace();
-                            WarehouseTransfers wtobj = wtos.GetObjectByKey<WarehouseTransfers>(dtlwt.Oid);
-
-                            #region Post Warehouse Transfer
-                            if (!sap.oCom.InTransaction) sap.oCom.StartTransaction();
-
-                            int tempto = 0;
-
-                            tempto = PostWTIntoSAP(wtobj, ObjectSpaceProvider, sap);
-                            if (tempto == 1)
-                            {
-                                if (sap.oCom.InTransaction)
-                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
-
-                                wtobj.Sap = true;
-                                wtobj.Status = DocStatus.Post;
-
-                                WarehouseTransfersDocTrail ds = wtos.CreateObject<WarehouseTransfersDocTrail>();
-                                ds.CreateUser = wtos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
-                                ds.CreateDate = DateTime.Now;
-                                ds.DocStatus = DocStatus.Post;
-                                ds.DocRemarks = "Posted SAP";
-                                wtobj.WarehouseTransfersDocTrail.Add(ds);
-
-                                GC.Collect();
-                            }
-                            else if (tempto <= 0)
-                            {
-                                if (sap.oCom.InTransaction)
-                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
-
-                                GC.Collect();
-                            }
-                            #endregion
-
-                            wtos.CommitChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteLog("[Error]", "Message: Warehouse Transfer Post Failed - OID : " + dtlwt.Oid + " (" + ex.Message + ")");
-                        }
-                    }
-                    #endregion
-
-                    WriteLog("[INFO]", "--Warehouse Transfer Posting End--");
                 }
 
                 temp = ConfigurationManager.AppSettings["SAPost"].ToString().ToUpper();
@@ -890,6 +831,66 @@ namespace PortalIntegration
                     WriteLog("[INFO]", "--Pick List End--");
                 }
 
+                temp = ConfigurationManager.AppSettings["WhsTransferPost"].ToString().ToUpper();
+                if (temp == "Y" || temp == "YES" || temp == "TRUE" || temp == "1")
+                {
+                    WriteLog("[INFO]", "--Warehouse Transfer Posting Start--");
+
+                    #region Warehouse Transfer
+                    IList<WarehouseTransfers> wtlist = ListObjectSpace.GetObjects<WarehouseTransfers>
+                        (CriteriaOperator.Parse("Sap = ? and Status = ?", 0, 1));
+
+                    foreach (WarehouseTransfers dtlwt in wtlist)
+                    {
+                        try
+                        {
+                            IObjectSpace wtos = ObjectSpaceProvider.CreateObjectSpace();
+                            WarehouseTransfers wtobj = wtos.GetObjectByKey<WarehouseTransfers>(dtlwt.Oid);
+
+                            #region Post Warehouse Transfer
+                            if (!sap.oCom.InTransaction) sap.oCom.StartTransaction();
+
+                            int tempto = 0;
+
+                            tempto = PostWTIntoSAP(wtobj, ObjectSpaceProvider, sap);
+                            if (tempto == 1)
+                            {
+                                if (sap.oCom.InTransaction)
+                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
+
+                                wtobj.Sap = true;
+                                wtobj.Status = DocStatus.Post;
+
+                                WarehouseTransfersDocTrail ds = wtos.CreateObject<WarehouseTransfersDocTrail>();
+                                ds.CreateUser = wtos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                                ds.CreateDate = DateTime.Now;
+                                ds.DocStatus = DocStatus.Post;
+                                ds.DocRemarks = "Posted SAP";
+                                wtobj.WarehouseTransfersDocTrail.Add(ds);
+
+                                GC.Collect();
+                            }
+                            else if (tempto <= 0)
+                            {
+                                if (sap.oCom.InTransaction)
+                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+
+                                GC.Collect();
+                            }
+                            #endregion
+
+                            wtos.CommitChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLog("[Error]", "Message: Warehouse Transfer Post Failed - OID : " + dtlwt.Oid + " (" + ex.Message + ")");
+                        }
+                    }
+                    #endregion
+
+                    WriteLog("[INFO]", "--Warehouse Transfer Posting End--");
+                }
+
                 temp = ConfigurationManager.AppSettings["DOPost"].ToString().ToUpper();
                 if (temp == "Y" || temp == "YES" || temp == "TRUE" || temp == "1")
                 {
@@ -1113,6 +1114,164 @@ namespace PortalIntegration
                     WriteLog("[INFO]", "--Downpayment Cancellation Posting End--");
                 }
                 // End ver 1.0.7
+
+                // Start ver 1.0.9
+                temp = ConfigurationManager.AppSettings["SOCancel"].ToString().ToUpper();
+                if (temp == "Y" || temp == "YES" || temp == "TRUE" || temp == "1")
+                {
+                    WriteLog("[INFO]", "--SO Cancel Start--");
+
+                    #region SO Cancel
+                    IList<SalesOrder> soclist = ListObjectSpace.GetObjects<SalesOrder>
+                    (CriteriaOperator.Parse("PendingCancel = ? and SapCancel = ?", 1, 0));
+
+                    foreach (SalesOrder dtlsoc in soclist)
+                    {
+                        int basedocentry = 0;
+                        try
+                        {
+                            IObjectSpace socos = ObjectSpaceProvider.CreateObjectSpace();
+                            SalesOrder socobj = socos.GetObjectByKey<SalesOrder>(dtlsoc.Oid);
+
+                            foreach(SalesOrderDetails detail in socobj.SalesOrderDetails)
+                            {
+                                basedocentry = detail.SAPDocEntry;
+                                break;
+                            }
+
+                            if (basedocentry > 0)
+                            {
+                                #region Cancel SO
+                                if (!sap.oCom.InTransaction) sap.oCom.StartTransaction();
+
+                                int tempso = 0;
+
+                                tempso = CancelSOtoSAP(socobj, basedocentry, ObjectSpaceProvider, sap);
+                                if (tempso == 1)
+                                {
+                                    if (sap.oCom.InTransaction)
+                                        sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
+
+                                    socobj.SapCancel = true;
+
+                                    SalesOrderDocStatus ds = socos.CreateObject<SalesOrderDocStatus>();
+                                    ds.CreateUser = socos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                                    ds.CreateDate = DateTime.Now;
+                                    ds.DocStatus = DocStatus.Cancelled;
+                                    ds.DocRemarks = "Cancel SAP";
+                                    socobj.SalesOrderDocStatus.Add(ds);
+
+                                    socos.CommitChanges();
+
+                                    GC.Collect();
+                                }
+                                else if (tempso <= 0)
+                                {
+                                    if (sap.oCom.InTransaction)
+                                        sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+
+                                    GC.Collect();
+                                }
+                                else if (tempso == 2)
+                                {
+                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+
+                                    socobj.SapCancel = true;
+                                    socos.CommitChanges();
+
+                                    GC.Collect();
+                                }
+                                #endregion
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLog("[Error]", "Message: Cancel SO Failed - OID : " + dtlsoc.Oid + " (" + ex.Message + ")");
+                        }
+                    }
+                    #endregion
+
+                    WriteLog("[INFO]", "--SO Cancel End--");
+                }
+
+                temp = ConfigurationManager.AppSettings["SOClosed"].ToString().ToUpper();
+                if (temp == "Y" || temp == "YES" || temp == "TRUE" || temp == "1")
+                {
+                    WriteLog("[INFO]", "--SO Closed Start--");
+
+                    #region SO Closed
+                    IList<SalesOrder> soclist = ListObjectSpace.GetObjects<SalesOrder>
+                    (CriteriaOperator.Parse("PendingClose = ? and SapClose = ?", 1, 0));
+
+                    foreach (SalesOrder dtlsoc in soclist)
+                    {
+                        int basedocentry = 0;
+                        try
+                        {
+                            IObjectSpace socos = ObjectSpaceProvider.CreateObjectSpace();
+                            SalesOrder socobj = socos.GetObjectByKey<SalesOrder>(dtlsoc.Oid);
+
+                            foreach (SalesOrderDetails detail in socobj.SalesOrderDetails)
+                            {
+                                basedocentry = detail.SAPDocEntry;
+                                break;
+                            }
+
+                            if (basedocentry > 0)
+                            {
+                                #region Closed SO
+                                if (!sap.oCom.InTransaction) sap.oCom.StartTransaction();
+
+                                int tempso = 0;
+
+                                tempso = ClosedSOtoSAP(socobj, basedocentry, ObjectSpaceProvider, sap);
+                                if (tempso == 1)
+                                {
+                                    if (sap.oCom.InTransaction)
+                                        sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
+
+                                    socobj.SapClose = true;
+
+                                    SalesOrderDocStatus ds = socos.CreateObject<SalesOrderDocStatus>();
+                                    ds.CreateUser = socos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                                    ds.CreateDate = DateTime.Now;
+                                    ds.DocStatus = DocStatus.Closed;
+                                    ds.DocRemarks = "Closed SAP";
+                                    socobj.SalesOrderDocStatus.Add(ds);
+
+                                    socos.CommitChanges();
+
+                                    GC.Collect();
+                                }
+                                else if (tempso <= 0)
+                                {
+                                    if (sap.oCom.InTransaction)
+                                        sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+
+                                    GC.Collect();
+                                }
+                                else if (tempso == 2)
+                                {
+                                    sap.oCom.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+
+                                    socobj.SapClose = true;
+                                    socos.CommitChanges();
+
+                                    GC.Collect();
+                                }
+                                #endregion
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLog("[Error]", "Message: Closed SO Failed - OID : " + dtlsoc.Oid + " (" + ex.Message + ")");
+                        }
+                    }
+                    #endregion
+
+                    WriteLog("[INFO]", "--SO Closed End--");
+                }
+                // End ver 1.0.9
 
                 #region Update DocNum
                 SqlCommand TransactionNotification = new SqlCommand("", conn);
@@ -2614,7 +2773,7 @@ namespace PortalIntegration
                     oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oCreditNotes);
 
                     oDoc.CardCode = oTargetDoc.Customer.BPCode;
-                    oDoc.CardName = oTargetDoc.Customer.BPName;
+                    oDoc.CardName = oTargetDoc.CustomerName;
                     oDoc.DocDate = oTargetDoc.PostingDate;
                     oDoc.Comments = oTargetDoc.Remarks;
                     oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
@@ -2992,7 +3151,7 @@ namespace PortalIntegration
                     oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInvoices);
 
                     oDoc.CardCode = oTargetDoc.Customer.BPCode;
-                    oDoc.CardName = oTargetDoc.Customer.BPName;
+                    oDoc.CardName = oTargetDoc.CustomerName;
                     oDoc.DocDate = DateTime.Now;
                     oDoc.Comments = oTargetDoc.Remarks;
                     oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
@@ -3162,7 +3321,7 @@ namespace PortalIntegration
                     oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
 
                     oDoc.CardCode = oTargetDoc.Customer.BPCode;
-                    oDoc.CardName = oTargetDoc.Customer.BPName;
+                    oDoc.CardName = oTargetDoc.CustomerName;
                     oDoc.DocDate = DateTime.Now;
                     oDoc.Comments = oTargetDoc.Remarks;
                     oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
@@ -3483,7 +3642,7 @@ namespace PortalIntegration
                     oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oCreditNotes);
 
                     oDoc.CardCode = oTargetDoc.Customer.BPCode;
-                    oDoc.CardName = oTargetDoc.Customer.BPName;
+                    oDoc.CardName = oTargetDoc.CustomerName;
                     oDoc.DocDate = oTargetDoc.PostingDate;
                     oDoc.Comments = oTargetDoc.Remarks;
                     oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
@@ -3653,24 +3812,143 @@ namespace PortalIntegration
         }
         // End ver 1.0.7
 
-        //public int SyncSalesOrder(SalesOrder oTargetDoc, IObjectSpaceProvider ObjectSpaceProvider, SAPCompany sap)
-        //{
-        //    // return 0 = post nothing
-        //    // return -1 = posting error
-        //    // return 1 = posting successful
-        //    try
-        //    {
-        //        SAPbobsCOM.Recordset rs = (SAPbobsCOM.Recordset)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+        // Start ver 1.0.9
+        public int CancelSOtoSAP(SalesOrder oTargetDoc, int docentry, IObjectSpaceProvider ObjectSpaceProvider, SAPCompany sap)
+        {
+            // return 0 = post nothing
+            // return -1 = posting error
+            // return 1 = posting successful
+            try
+            {
+                Guid g;
+                // Create and display the value of two GUIDs.
+                g = Guid.NewGuid();
 
-        //        rs.DoQuery("SELECT ItemCode,CardCode FROM OSPP WHERE CardCode = '*" + oTargetDoc.PriceList.ListNum + "' AND ItemCode = '" + item.Item + "'");
+                SAPbobsCOM.Documents oDoc = null;
 
-        //        return 1;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        WriteLog("[Error]", "Message: Sales Order Sync from SAP :" + oTargetDoc + "-" + ex.Message);
-        //        return -1;
-        //    }
-        //}
+                oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+                oDoc.GetByKey(docentry);
+
+                if (oDoc.Cancelled == BoYesNoEnum.tNO)
+                {
+                    int rc = oDoc.Cancel();
+                    if (rc != 0)
+                    {
+                        {
+                            string temp = sap.oCom.GetLastErrorDescription();
+                            if (sap.oCom.InTransaction)
+                            {
+                                sap.oCom.EndTransaction(BoWfTransOpt.wf_RollBack);
+                            }
+
+                            IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
+                            SalesOrder obj = osupdate.GetObjectByKey<SalesOrder>(oTargetDoc.Oid);
+
+                            SalesOrderDocStatus ds = osupdate.CreateObject<SalesOrderDocStatus>();
+                            ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                            ds.CreateDate = DateTime.Now;
+                            ds.DocStatus = DocStatus.Open;
+                            ds.DocRemarks = "SAP Error:" + temp;
+                            obj.SalesOrderDocStatus.Add(ds);
+
+                            osupdate.CommitChanges();
+
+                            WriteLog("[Error]", "Message: Sales Order Cancel :" + oTargetDoc + "-" + temp);
+
+                            return -1;
+                        }
+                    }
+                    return 1;
+                }
+                return 2;
+            }
+            catch (Exception ex)
+            {
+                IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
+                SalesOrder obj = osupdate.GetObjectByKey<SalesOrder>(oTargetDoc.Oid);
+
+                SalesOrderDocStatus ds = osupdate.CreateObject<SalesOrderDocStatus>();
+                ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                ds.CreateDate = DateTime.Now;
+                ds.DocStatus = DocStatus.Open;
+                ds.DocRemarks = "SAP Error:" + ex.Message;
+                obj.SalesOrderDocStatus.Add(ds);
+
+                osupdate.CommitChanges();
+
+                WriteLog("[Error]", "Message: Sales Order Cancel :" + oTargetDoc + "-" + ex.Message);
+
+                return -1;
+            }
+        }
+        public int ClosedSOtoSAP(SalesOrder oTargetDoc, int docentry, IObjectSpaceProvider ObjectSpaceProvider, SAPCompany sap)
+        {
+            // return 0 = post nothing
+            // return -1 = posting error
+            // return 1 = posting successful
+            try
+            {
+                Guid g;
+                // Create and display the value of two GUIDs.
+                g = Guid.NewGuid();
+
+                SAPbobsCOM.Documents oDoc = null;
+
+                oDoc = (SAPbobsCOM.Documents)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+                oDoc.GetByKey(docentry);
+
+                if (oDoc.DocumentStatus != BoStatus.bost_Close)
+                {
+                    int rc = oDoc.Close();
+                    if (rc != 0)
+                    {
+                        {
+                            string temp = sap.oCom.GetLastErrorDescription();
+                            if (sap.oCom.InTransaction)
+                            {
+                                sap.oCom.EndTransaction(BoWfTransOpt.wf_RollBack);
+                            }
+
+                            IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
+                            SalesOrder obj = osupdate.GetObjectByKey<SalesOrder>(oTargetDoc.Oid);
+
+                            SalesOrderDocStatus ds = osupdate.CreateObject<SalesOrderDocStatus>();
+                            ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                            ds.CreateDate = DateTime.Now;
+                            ds.DocStatus = DocStatus.Open;
+                            ds.DocRemarks = "SAP Error:" + temp;
+                            obj.SalesOrderDocStatus.Add(ds);
+
+                            osupdate.CommitChanges();
+
+                            WriteLog("[Error]", "Message: Sales Order Close :" + oTargetDoc + "-" + temp);
+
+                            return -1;
+                        }
+                    }
+                    return 1;
+                }
+                return 2;
+            }
+            catch (Exception ex)
+            {
+                IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
+                SalesOrder obj = osupdate.GetObjectByKey<SalesOrder>(oTargetDoc.Oid);
+
+                SalesOrderDocStatus ds = osupdate.CreateObject<SalesOrderDocStatus>();
+                ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                ds.CreateDate = DateTime.Now;
+                ds.DocStatus = DocStatus.Open;
+                ds.DocRemarks = "SAP Error:" + ex.Message;
+                obj.SalesOrderDocStatus.Add(ds);
+
+                osupdate.CommitChanges();
+
+                WriteLog("[Error]", "Message: Sales Order Close :" + oTargetDoc + "-" + ex.Message);
+
+                return -1;
+            }
+        }
+        // End ver 1.0.9
     }
 }
