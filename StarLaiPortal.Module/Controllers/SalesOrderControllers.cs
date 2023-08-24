@@ -163,7 +163,7 @@ namespace StarLaiPortal.Module.Controllers
             if (p.IsErr) return;
             string sapdb = null;
             int docentry = 0;
-            string picklistdoc = null;
+            string error = null;
 
             foreach (SalesOrderDetails dtl in selectedObject.SalesOrderDetails)
             {
@@ -188,15 +188,7 @@ namespace StarLaiPortal.Module.Controllers
 
             if (sapdb != null && docentry > 0)
             {
-                string getpicklist = "SELECT T0.DocNum " +
-                    "FROM PickList T0 " +
-                    "INNER JOIN PickListDetails T1 ON T0.OID = T1.PickList AND T1.GCRecord IS NULL " +
-                    "INNER JOIN SalesOrderDetails T2 ON T1.SOBaseId = T2.OID " +
-                    "INNER JOIN [" + sapdb + "]..RDR1 R1 ON T2.SAPDocEntry = R1.DocEntry AND T2.SAPBaseLine = R1.LineNum " +
-                    "INNER JOIN [" + sapdb + "]..ORDR R0 ON R1.DocEntry = R0.DocEntry " +
-                    "WHERE T0.GCRecord IS NULL AND T0.Status<> 2 " +
-                    "AND R0.DocEntry = '" + docentry + "' " +
-                    "ORDER BY R1.VisOrder DESC";
+                string getpicklist = "EXEC sp_SAPChecking 'SalesOrders', 'Cancel', '" + sapdb + "', " + docentry;
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close();
@@ -206,13 +198,13 @@ namespace StarLaiPortal.Module.Controllers
                 SqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {
-                    picklistdoc = reader1.GetString(0);
+                    error = reader1.GetString(0);
                     break;
                 }
                 conn.Close();
             }
 
-            if (sapdb != null && docentry > 0 && picklistdoc == null)
+            if (error == null)
             {
                 selectedObject.PendingCancel = true;
                 selectedObject.Status = DocStatus.Cancelled;
@@ -231,7 +223,7 @@ namespace StarLaiPortal.Module.Controllers
             }
             else
             {
-                showMsg("Error", "Sales Order referred by Pick List " + picklistdoc, InformationType.Error);
+                showMsg("Error", error, InformationType.Error);
             }
         }
 
@@ -256,7 +248,7 @@ namespace StarLaiPortal.Module.Controllers
             if (p.IsErr) return;
             string sapdb = null;
             int docentry = 0;
-            string picklistdoc = null;
+            string error = null;
 
             foreach (SalesOrderDetails dtl in selectedObject.SalesOrderDetails)
             {
@@ -281,15 +273,7 @@ namespace StarLaiPortal.Module.Controllers
 
             if (sapdb != null && docentry > 0)
             {
-                string getpicklist = "SELECT T0.DocNum " +
-                    "FROM PickList T0 " +
-                    "INNER JOIN PickListDetails T1 ON T0.OID = T1.PickList AND T1.GCRecord IS NULL " +
-                    "INNER JOIN SalesOrderDetails T2 ON T1.SOBaseId = T2.OID " +
-                    "INNER JOIN [" + sapdb + "]..RDR1 R1 ON T2.SAPDocEntry = R1.DocEntry AND T2.SAPBaseLine = R1.LineNum " +
-                    "INNER JOIN [" + sapdb + "]..ORDR R0 ON R1.DocEntry = R0.DocEntry " +
-                    "WHERE T0.GCRecord IS NULL AND T0.Status<> 2 " +
-                    "AND R0.DocEntry = '" + docentry + "' " +
-                    "ORDER BY R1.VisOrder DESC";
+                string getpicklist = "EXEC sp_SAPChecking 'SalesOrders', 'Close', '" + sapdb + "', " + docentry;
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close();
@@ -299,13 +283,13 @@ namespace StarLaiPortal.Module.Controllers
                 SqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {
-                    picklistdoc = reader1.GetString(0);
+                    error = reader1.GetString(0);
                     break;
                 }
                 conn.Close();
             }
 
-            if (sapdb != null && docentry > 0 && picklistdoc == null)
+            if (error == null)
             {
                 selectedObject.PendingClose = true;
                 selectedObject.Status = DocStatus.Cancelled;
@@ -324,7 +308,7 @@ namespace StarLaiPortal.Module.Controllers
             }
             else
             {
-                showMsg("Error", "Sales Order referred by Pick List " + picklistdoc, InformationType.Error);
+                showMsg("Error", error, InformationType.Error);
             }
         }
 
