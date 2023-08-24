@@ -156,14 +156,27 @@ namespace StarLaiPortal.WebApi.API.Controller
                 var userName = security.UserName;
 
 
-                if (dynamicObj.WarehouseTransferDetails != null)
+
+                using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
-                    foreach (dynamic dtl in dynamicObj.WarehouseTransferDetails)
+
+                    if (dynamicObj.WarehouseTransferDetails != null)
                     {
-                        WarehouseTransferDetails detail = transfers.WarehouseTransferDetails.FirstOrDefault(line => line.Oid == dtl.Oid);
-                        if (detail != null)
+                        foreach (dynamic dtl in dynamicObj.WarehouseTransferDetails)
                         {
-                            detail.ToBin = objectSpace.GetObjectByKey<vwBin>(dtl.ToBin);
+                            WarehouseTransferDetails detail = transfers.WarehouseTransferDetails.FirstOrDefault(line => line.Oid == dtl.Oid);
+                            if (detail != null)
+                            {
+                                detail.ToBin = objectSpace.GetObjectByKey<vwBin>(dtl.ToBin);
+                            }
+
+                            string json = JsonConvert.SerializeObject(new { itemcode = detail.ItemCode.ItemCode, bincode = detail.FromBin.BinCode, quantity = detail.Quantity });
+
+                            var validateBalance = conn.Query<ValidateJson>($"exec sp_beforedatasave 'ValidateStockBalance', '{json}'").FirstOrDefault();
+                            if (validateBalance.Error)
+                            {
+                                return Problem(validateBalance.ErrorMessage);
+                            }
                         }
                     }
                 }
