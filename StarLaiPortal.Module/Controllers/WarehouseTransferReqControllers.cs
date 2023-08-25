@@ -859,25 +859,25 @@ namespace StarLaiPortal.Module.Controllers
             string filename;
 
             SqlConnection conn = new SqlConnection(genCon.getConnectionString());
-            SalesQuotation sq = (SalesQuotation)View.CurrentObject;
+            SalesQuotation whr = (SalesQuotation)View.CurrentObject;
             ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
 
             try
             {
                 ReportDocument doc = new ReportDocument();
                 strServer = ConfigurationManager.AppSettings.Get("SQLserver").ToString();
-                doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\SQImportFormat.rpt"));
+                doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\WHRImportFormat.rpt"));
                 strDatabase = conn.Database;
                 strUserID = ConfigurationManager.AppSettings.Get("SQLID").ToString();
                 strPwd = ConfigurationManager.AppSettings.Get("SQLPass").ToString();
                 doc.DataSourceConnections[0].SetConnection(strServer, strDatabase, strUserID, strPwd);
                 doc.Refresh();
 
-                doc.SetParameterValue("DocNum", sq.DocNum);
+                doc.SetParameterValue("DocNum", whr.DocNum);
                 doc.SetParameterValue("Type", "StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer.WarehouseTransferReq");
 
                 filename = ConfigurationManager.AppSettings.Get("ReportPath").ToString() + conn.Database
-                    + "_" + sq.DocNum + "_" + user.UserName + "_SQImport_" + ".xls";
+                    + "_" + whr.DocNum + "_" + user.UserName + "_WHRImport_" + ".xls";
 
                 doc.ExportToDisk(ExportFormatType.Excel, filename);
                 doc.Close();
@@ -885,7 +885,7 @@ namespace StarLaiPortal.Module.Controllers
 
                 string url = HttpContext.Current.Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority +
                     ConfigurationManager.AppSettings.Get("PrintPath").ToString() + conn.Database
-                    + "_" + sq.DocNum + "_" + user.UserName + "_SQImport_" + ".xls";
+                    + "_" + whr.DocNum + "_" + user.UserName + "_WHRImport_" + ".xls";
                 var script = "window.open('" + url + "');";
 
                 WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
