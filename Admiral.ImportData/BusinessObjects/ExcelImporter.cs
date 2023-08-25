@@ -15,6 +15,8 @@ using DevExpress.Persistent.Validation;
 using DevExpress.Spreadsheet;
 using DevExpress.Xpo;
 
+// 2023-08-25 - export and import function - ver 1.0.9
+
 namespace Admiral.ImportData
 {
     public interface IModelImportData
@@ -326,6 +328,15 @@ namespace Admiral.ImportData
                                     ws.Cells[r, c].SetValue(option.DocNum);
                                 }
                             }
+                            // Start ver 1.0.9
+                            if (option.Type == "WarehouseTransferReq")
+                            {
+                                if (ws.Cells[3, c].DisplayText == "Warehouse Transfer Req")
+                                {
+                                    ws.Cells[r, c].SetValue(option.DocNum);
+                                }
+                            }
+                            // End ver 1.0.9
 
                             var field = fields[c];
                             var cell = ws.Cells[r, c];
@@ -660,6 +671,17 @@ namespace Admiral.ImportData
 
                         book.Worksheets.Remove(book.Worksheets[0]);
                     }
+
+                    // Start ver 1.0.9
+                    if (item.Name == "WarehouseTransferReqDetails")
+                    {
+                        var cls = option.MainTypeInfo.Application.BOModel.GetClass(item.MemberInfo.ListElementTypeInfo.Type);
+                        var b = book.Worksheets.Add("Warehouse Request Item");
+                        CreateSheet(b, cls, "WarehouseTransferReq", option.DocNum);
+
+                        book.Worksheets.Remove(book.Worksheets[0]);
+                    }
+                    // End ver 1.0.9
                 }
             }
 
@@ -669,7 +691,14 @@ namespace Admiral.ImportData
 
         private void CreateSheet(Worksheet book, IModelClass boInfo, string module, string docnum)
         {
-            book.Name = boInfo.Caption;
+            if (boInfo.Caption.Length > 31)
+            {
+                book.Name = boInfo.Caption.Substring(0, 30).ToString();
+            }
+            else
+            {
+                book.Name = boInfo.Caption;
+            }
             //book.Cells[0, 0].Value = "System Type :";
             //book.Cells[0, 2].Value = "DocNum :";
             book.Cells[0, 0].Value = docnum;
@@ -771,6 +800,30 @@ namespace Admiral.ImportData
                         i++;
                     }
                 }
+
+                // Start ver 1.0.9
+                if (module == "WarehouseTransferReq")
+                {
+                    if (item.Name == "ItemCode" || item.Name == "Quantity" || item.Name == "WarehouseTransferReq")
+                    {
+                        var c = cells[3, i];
+                        c.Value = item.Caption;
+                        c.FillColor = Color.FromArgb(255, 153, 0);
+                        c.Font.Color = Color.White;
+                        var isRequiredField = IsRequiredField(item);
+
+                        var range = book.Range.FromLTRB(i, 2, i, 20000);
+
+                        //DataValidation dv = null;
+
+                        if (isRequiredField)
+                        {
+                            c.Font.Bold = true;
+                        }
+                        i++;
+                    }
+                }
+                // End ver 1.0.9
             }
             #endregion
         }

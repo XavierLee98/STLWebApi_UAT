@@ -133,10 +133,10 @@
     <value>17, 275</value>
   </metadata>
   <metadata name="ReviewAppSQ.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 404</value>
+    <value>17, 318</value>
   </metadata>
   <metadata name="ApproveAppSQ.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 318</value>
+    <value>17, 490</value>
   </metadata>
   <metadata name="RejectAppSQ.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 232</value>
@@ -145,10 +145,10 @@
     <value>17, 361</value>
   </metadata>
   <metadata name="ApproveAppSQ_Pop.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>169, 361</value>
+    <value>17, 404</value>
   </metadata>
   <metadata name="ExportSQImport.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>169, 404</value>
+    <value>17, 447</value>
   </metadata>
   <metadata name="ImportSQ.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>335, 404</value>

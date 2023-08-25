@@ -35,6 +35,7 @@ using System.Linq;
 using System.Text;
 
 // 2023-07-28 add AR Downpayment cancalletion ver 1.0.7
+// 2023-08-25 add picklistactual validation ver 1.0.9
 
 namespace StarLaiPortal.Module.Web.Controllers
 {
@@ -575,6 +576,43 @@ namespace StarLaiPortal.Module.Web.Controllers
                 View.CreateControls();
             }
             // End ver 1.0.7
+            // Start ver 1.0.9
+            else if (View.ObjectTypeInfo.Type == typeof(PickListDetailsActual))
+            {
+                PickListDetailsActual CurrObject = (PickListDetailsActual)args.CurrentObject;
+
+                base.Save(args);
+                ((DetailView)View).ViewEditMode = ViewEditMode.View;
+                View.BreakLinksToControls();
+                View.CreateControls();
+
+                bool over = false;
+                string overitem = null;
+
+                foreach (PickListDetails dtl in CurrObject.PickList.PickListDetails)
+                {
+                    int pickqty = 0;
+                    if (CurrObject.PickListDetailOid == dtl.Oid)
+                    {
+                        pickqty = pickqty + (int)CurrObject.PickQty;
+                    }
+
+                    dtl.PickQty = pickqty;
+
+                    if (pickqty > dtl.PlanQty)
+                    {
+                        over = true;
+                        overitem = dtl.ItemCode.ItemCode;
+                    }
+                }
+
+                if (over == true)
+                {
+                    showMsg("Error", "Pick qty more than plan qty. Item : " + overitem, InformationType.Error);
+                    return;
+                }
+            }
+            // End ver 1.0.9
             else
             {
                 base.Save(args);

@@ -1,4 +1,5 @@
-﻿using CrystalDecisions.CrystalReports.Engine;
+﻿using Admiral.ImportData;
+using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
@@ -16,6 +17,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using StarLaiPortal.Module.BusinessObjects;
 using StarLaiPortal.Module.BusinessObjects.Item_Inquiry;
+using StarLaiPortal.Module.BusinessObjects.Sales_Quotation;
 using StarLaiPortal.Module.BusinessObjects.Setup;
 using StarLaiPortal.Module.BusinessObjects.View;
 using StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer;
@@ -29,6 +31,7 @@ using System.Text;
 using System.Web;
 
 // 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
+// 2023-08-25 - export and import function - ver 1.0.9
 
 namespace StarLaiPortal.Module.Controllers
 {
@@ -54,6 +57,10 @@ namespace StarLaiPortal.Module.Controllers
             this.RejectAppWTR.Active.SetItemValue("Enabled", false);
             this.WTRCopyToWT.Active.SetItemValue("Enabled", false);
             this.ApproveAppWTR_Pop.Active.SetItemValue("Enabled", false);
+            // Start ver 1.0.9
+            this.ExportWHReq.Active.SetItemValue("Enabled", false);
+            this.ImportWHReq.Active.SetItemValue("Enabled", false);
+            // End ver 1.0.9
         }
         protected override void OnViewControlsCreated()
         {
@@ -81,10 +88,18 @@ namespace StarLaiPortal.Module.Controllers
                 if (((DetailView)View).ViewEditMode == ViewEditMode.Edit)
                 {
                     this.WTRInquiryItem.Active.SetItemValue("Enabled", true);
+                    // Start ver 1.0.9
+                    this.ExportWHReq.Active.SetItemValue("Enabled", true);
+                    this.ImportWHReq.Active.SetItemValue("Enabled", true);
+                    // End ver 1.0.9
                 }
                 else
                 {
                     this.WTRInquiryItem.Active.SetItemValue("Enabled", false);
+                    // Start ver 1.0.9
+                    this.ExportWHReq.Active.SetItemValue("Enabled", false);
+                    this.ImportWHReq.Active.SetItemValue("Enabled", false);
+                    // End ver 1.0.9
                 }
             }
             else if (View.Id == "WarehouseTransferReq_ListView_Approval")
@@ -119,6 +134,10 @@ namespace StarLaiPortal.Module.Controllers
                 this.RejectAppWTR.Active.SetItemValue("Enabled", false);
                 this.WTRCopyToWT.Active.SetItemValue("Enabled", false);
                 this.ApproveAppWTR_Pop.Active.SetItemValue("Enabled", false);
+                // Start ver 1.0.9
+                this.ExportWHReq.Active.SetItemValue("Enabled", false);
+                this.ImportWHReq.Active.SetItemValue("Enabled", false);
+                // End ver 1.0.9
             }
         }
         protected override void OnDeactivated()
@@ -829,5 +848,87 @@ namespace StarLaiPortal.Module.Controllers
 
             e.View = dv;
         }
+
+        // Start ver 1.0.9
+        private void ExportWHReq_Execute(object sender, SimpleActionExecuteEventArgs e)
+        {
+            string strServer;
+            string strDatabase;
+            string strUserID;
+            string strPwd;
+            string filename;
+
+            SqlConnection conn = new SqlConnection(genCon.getConnectionString());
+            SalesQuotation sq = (SalesQuotation)View.CurrentObject;
+            ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
+
+            try
+            {
+                ReportDocument doc = new ReportDocument();
+                strServer = ConfigurationManager.AppSettings.Get("SQLserver").ToString();
+                doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\SQImportFormat.rpt"));
+                strDatabase = conn.Database;
+                strUserID = ConfigurationManager.AppSettings.Get("SQLID").ToString();
+                strPwd = ConfigurationManager.AppSettings.Get("SQLPass").ToString();
+                doc.DataSourceConnections[0].SetConnection(strServer, strDatabase, strUserID, strPwd);
+                doc.Refresh();
+
+                doc.SetParameterValue("DocNum", sq.DocNum);
+                doc.SetParameterValue("Type", "StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer.WarehouseTransferReq");
+
+                filename = ConfigurationManager.AppSettings.Get("ReportPath").ToString() + conn.Database
+                    + "_" + sq.DocNum + "_" + user.UserName + "_SQImport_" + ".xls";
+
+                doc.ExportToDisk(ExportFormatType.Excel, filename);
+                doc.Close();
+                doc.Dispose();
+
+                string url = HttpContext.Current.Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority +
+                    ConfigurationManager.AppSettings.Get("PrintPath").ToString() + conn.Database
+                    + "_" + sq.DocNum + "_" + user.UserName + "_SQImport_" + ".xls";
+                var script = "window.open('" + url + "');";
+
+                WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
+            }
+            catch (Exception ex)
+            {
+                showMsg("Fail", ex.Message, InformationType.Error);
+            }
+        }
+
+        private void ImportWHReq_Execute(object sender, PopupWindowShowActionExecuteEventArgs e)
+        {
+            ObjectSpace.CommitChanges();
+            ObjectSpace.Refresh();
+        }
+
+        private void ImportWHReq_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
+        {
+            WarehouseTransferReq trx = (WarehouseTransferReq)View.CurrentObject;
+
+            var os = Application.CreateObjectSpace();
+            var solution = os.CreateObject<ImportData>();
+            solution.Option = new ImportOption();
+
+            solution.Option.UpdateProgress = (x) => solution.Progress = x;
+            solution.Option.DocNum = trx.DocNum;
+            solution.Option.ConnectionString = genCon.getConnectionString();
+            solution.Option.Type = "WarehouseTransferReq";
+
+            solution.Option.MainTypeInfo = (this.View as DetailView).Model.ModelClass;
+            var view = Application.CreateDetailView(os, solution, false);
+
+            view.Closed += (sss, eee) =>
+            {
+                this.Frame.GetController<RefreshController>().RefreshAction.DoExecute();
+            };
+
+            e.DialogController.CancelAction.Active["NothingToCancel"] = false;
+            e.DialogController.AcceptAction.ActionMeaning = ActionMeaning.Unknown;
+            //e.Maximized = true;
+
+            e.View = view;
+        }
+        // End ver 1.0.9
     }
 }

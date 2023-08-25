@@ -27,6 +27,8 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
+// 2023-08-25 add validation for qty when submit ver 1.0.9
+
 namespace StarLaiPortal.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
@@ -415,6 +417,17 @@ namespace StarLaiPortal.Module.Controllers
             ASN selectedObject = (ASN)e.CurrentObject;
             StringParameters p = (StringParameters)e.PopupWindow.View.CurrentObject;
             if (p.IsErr) return;
+
+            // Start ver 1.0.9
+            foreach(ASNDetails dtl in selectedObject.ASNDetails)
+            {
+                if (dtl.UnloadQty > dtl.Quantity)
+                {
+                    showMsg("Error", "Unload Qty cannot more than Open Qty. Item : " + dtl.ItemCode, InformationType.Error);
+                    return;
+                }
+            }
+            // End ver 1.0.9
 
             if (selectedObject.IsValid == true)
             {

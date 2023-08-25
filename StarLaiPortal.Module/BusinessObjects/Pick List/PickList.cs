@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 add picklistactual validation ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Pick_List
 {
     [DefaultClassOptions]
@@ -505,6 +507,25 @@ namespace StarLaiPortal.Module.BusinessObjects.Pick_List
                 return false;
             }
         }
+
+        // Start ver 1.0.9
+        [Browsable(false)]
+        public bool IsValid5
+        {
+            get
+            {
+                foreach(PickListDetails dtl in this.PickListDetails)
+                {
+                    if (dtl.PickQty > dtl.PlanQty)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        // End ver 1.0.9
 
         [Association("PickList-PickListDetails")]
         [XafDisplayName("Plan")]

@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 - export and import function - ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
 {
     [DefaultClassOptions]
@@ -39,6 +41,10 @@ namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
 
     [Appearance("HideItemInq", AppearanceItemType.Action, "True", TargetItems = "WTRInquiryItem", Criteria = "FromWarehouse = null || ToWarehouse = null", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
 
+    // Start ver 1.0.9
+    [Appearance("HideExportWHReq", AppearanceItemType.Action, "True", TargetItems = "ExportWHReq", Criteria = "DocNum = null || FromWarehouse = null || ToWarehouse = null", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    [Appearance("HideImportWHReq", AppearanceItemType.Action, "True", TargetItems = "ImportWHReq", Criteria = "DocNum = null || FromWarehouse = null || ToWarehouse = null", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    // End ver 1.0.9
     public class WarehouseTransferReq : XPObject
     { // Inherit from a different class to provide a custom primary key, concurrency and deletion behavior, etc. (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument113146.aspx).
         // Use CodeRush to create XPO classes and properties with a few keystrokes.

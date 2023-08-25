@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 - export and import function - ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
 {
     [DefaultClassOptions]
@@ -113,8 +115,13 @@ namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
                 SetPropertyValue("ItemCode", ref _ItemCode, value);
                 if (!IsLoading && value != null)
                 {
-                    FromBin = Session.FindObject<vwBinStockBalance>(CriteriaOperator.Parse("BinAbs = ? and ItemCode = ? and Warehouse = ?",
-                        FromWarehouse.DftBinAbs, ItemCode.ItemCode, FromWarehouse.WarehouseCode));
+                    // Start ver 1.0.9
+                    if (this.FromWarehouse != null)
+                    {
+                        FromBin = Session.FindObject<vwBinStockBalance>(CriteriaOperator.Parse("BinAbs = ? and ItemCode = ? and Warehouse = ?",
+                            FromWarehouse.DftBinAbs, ItemCode.ItemCode, FromWarehouse.WarehouseCode));
+                    }
+                    // End ver 1.0.9
 
                     ItemDesc = ItemCode.ItemName;
                     CatalogNo = ItemCode.CatalogNo;
@@ -222,7 +229,9 @@ namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
         [NoForeignKey]
         [ImmediatePostData]
         [LookupEditorMode(LookupEditorMode.AllItems)]
-        [RuleRequiredField(DefaultContexts.Save)]
+        // Start ver 1.0.9
+        //[RuleRequiredField(DefaultContexts.Save)]
+        // End ver 1.0.9
         [XafDisplayName("From Warehouse")]
         [Index(10), VisibleInListView(false), VisibleInDetailView(false), VisibleInLookupListView(false)]
         public vwWarehouse FromWarehouse
@@ -246,7 +255,9 @@ namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
         [NoForeignKey]
         [ImmediatePostData]
         [LookupEditorMode(LookupEditorMode.AllItems)]
-        [RuleRequiredField(DefaultContexts.Save)]
+        // Start ver 1.0.9
+        //[RuleRequiredField(DefaultContexts.Save)]
+        // End ver 1.0.9
         [XafDisplayName("To Warehouse")]
         [Index(13), VisibleInListView(false), VisibleInDetailView(false), VisibleInLookupListView(false)]
         public vwWarehouse ToWarehouse
