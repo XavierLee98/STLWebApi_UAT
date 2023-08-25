@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 add picklistactual validation ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Pick_List
 {
     [DefaultClassOptions]
@@ -186,10 +188,16 @@ namespace StarLaiPortal.Module.BusinessObjects.Pick_List
                 SetPropertyValue("PickQty", ref _PickQty, value);
                 if (!IsLoading)
                 {
-                    if (PickQty <= 0)
+                    // Start ver 1.0.9
+                    //if (PickQty <= 0)
+                    //{
+                    //    PickQty = 1;
+                    //}
+                    if (PickQty < 0)
                     {
-                        PickQty = 1;
+                        PickQty = 0;
                     }
+                    // Start ver 1.0.9
                 }
             }
         }

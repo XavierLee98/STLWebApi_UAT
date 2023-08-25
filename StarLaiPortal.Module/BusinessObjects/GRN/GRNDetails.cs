@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 remove validation for qty ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.GRN
 {
     [DefaultClassOptions]
@@ -220,10 +222,12 @@ namespace StarLaiPortal.Module.BusinessObjects.GRN
                 SetPropertyValue("Received", ref _Received, value);
                 if (!IsLoading)
                 {
-                    if (Received > OpenQty)
-                    {
-                        Received = OpenQty;
-                    }
+                    // Start ver 1.0.9
+                    //if (Received > OpenQty)
+                    //{
+                    //    Received = OpenQty;
+                    //}
+                    // End vere 1.0.9
 
                     if (Received < 0)
                     {

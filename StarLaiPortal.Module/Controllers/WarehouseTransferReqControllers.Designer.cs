@@ -38,6 +38,8 @@
             this.RejectAppWTR = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             this.WTRCopyToWT = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             this.ApproveAppWTR_Pop = new DevExpress.ExpressApp.Actions.PopupWindowShowAction(this.components);
+            this.ExportWHReq = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
+            this.ImportWHReq = new DevExpress.ExpressApp.Actions.PopupWindowShowAction(this.components);
             // 
             // WTRInquiryItem
             // 
@@ -132,6 +134,27 @@
             this.ApproveAppWTR_Pop.CustomizePopupWindowParams += new DevExpress.ExpressApp.Actions.CustomizePopupWindowParamsEventHandler(this.ApproveAppWTR_Pop_CustomizePopupWindowParams);
             this.ApproveAppWTR_Pop.Execute += new DevExpress.ExpressApp.Actions.PopupWindowShowActionExecuteEventHandler(this.ApproveAppWTR_Pop_Execute);
             // 
+            // ExportWHReq
+            // 
+            this.ExportWHReq.Caption = "Export Format";
+            this.ExportWHReq.Category = "ListView";
+            this.ExportWHReq.ConfirmationMessage = null;
+            this.ExportWHReq.Id = "ExportWHReq";
+            this.ExportWHReq.ToolTip = null;
+            this.ExportWHReq.Execute += new DevExpress.ExpressApp.Actions.SimpleActionExecuteEventHandler(this.ExportWHReq_Execute);
+            // 
+            // ImportWHReq
+            // 
+            this.ImportWHReq.AcceptButtonCaption = null;
+            this.ImportWHReq.CancelButtonCaption = null;
+            this.ImportWHReq.Caption = "Import Data";
+            this.ImportWHReq.Category = "ListView";
+            this.ImportWHReq.ConfirmationMessage = null;
+            this.ImportWHReq.Id = "ImportWHReq";
+            this.ImportWHReq.ToolTip = null;
+            this.ImportWHReq.CustomizePopupWindowParams += new DevExpress.ExpressApp.Actions.CustomizePopupWindowParamsEventHandler(this.ImportWHReq_CustomizePopupWindowParams);
+            this.ImportWHReq.Execute += new DevExpress.ExpressApp.Actions.PopupWindowShowActionExecuteEventHandler(this.ImportWHReq_Execute);
+            // 
             // WarehouseTransferReqControllers
             // 
             this.Actions.Add(this.WTRInquiryItem);
@@ -143,6 +166,8 @@
             this.Actions.Add(this.RejectAppWTR);
             this.Actions.Add(this.WTRCopyToWT);
             this.Actions.Add(this.ApproveAppWTR_Pop);
+            this.Actions.Add(this.ExportWHReq);
+            this.Actions.Add(this.ImportWHReq);
 
         }
 
@@ -157,5 +182,7 @@
         private DevExpress.ExpressApp.Actions.SimpleAction RejectAppWTR;
         private DevExpress.ExpressApp.Actions.SimpleAction WTRCopyToWT;
         private DevExpress.ExpressApp.Actions.PopupWindowShowAction ApproveAppWTR_Pop;
+        private DevExpress.ExpressApp.Actions.SimpleAction ExportWHReq;
+        private DevExpress.ExpressApp.Actions.PopupWindowShowAction ImportWHReq;
     }
 }

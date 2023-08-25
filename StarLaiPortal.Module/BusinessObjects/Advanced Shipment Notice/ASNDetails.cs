@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 remove validation for qty ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice
 {
     [DefaultClassOptions]
@@ -235,7 +237,9 @@ namespace StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice
         }
 
         private decimal _UnloadQty;
-        [ImmediatePostData]
+        // Start ver 1.0.9
+        //[ImmediatePostData]
+        // End ver 1.0.9
         [DbType("numeric(18,6)")]
         [ModelDefault("DisplayFormat", "{0:N0}")]
         [ModelDefault("EditMask", "d")]
@@ -247,13 +251,15 @@ namespace StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice
             set
             {
                 SetPropertyValue("UnloadQty", ref _UnloadQty, value);
-                if (!IsLoading)
-                {
-                    if (UnloadQty > Quantity)
-                    {
-                        UnloadQty = Quantity;
-                    }
-                }
+                // Start ver 1.0.9
+                //if (!IsLoading)
+                //{
+                //    if (UnloadQty > Quantity)
+                //    {
+                //        UnloadQty = Quantity;
+                //    }
+                //}
+                // End ver 1.0.9
             }
         }
 

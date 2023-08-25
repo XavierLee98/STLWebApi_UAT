@@ -14,9 +14,11 @@ using DevExpress.ExpressApp.Web;
 using DevExpress.ExpressApp.Web.Editors.ASPx;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
+using DevExpress.Web.Internal.XmlProcessor;
 using StarLaiPortal.Module.BusinessObjects;
 using StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice;
 using StarLaiPortal.Module.BusinessObjects.GRN;
+using StarLaiPortal.Module.BusinessObjects.Sales_Quotation;
 using StarLaiPortal.Module.BusinessObjects.View; 
 using System;
 using System.Collections.Generic;
@@ -424,6 +426,30 @@ namespace StarLaiPortal.Module.Controllers
             StringParameters p = (StringParameters)e.PopupWindow.View.CurrentObject;
             if (p.IsErr) return;
 
+            // Start ver 1.0.9
+            foreach (GRNDetails dtl in selectedObject.GRNDetails)
+            {
+                if (dtl.Received > dtl.OpenQty)
+                {
+                    showMsg("Error", "Received Qty cannot more than Open Qty. Item : " + dtl.ItemCode, InformationType.Error);
+                    return;
+                }
+
+                if (selectedObject.GRNDetails.Where(w => w.BaseType == "PO" && w.BaseDoc == dtl.BaseDoc && w.BaseId == dtl.BaseId).Count() > 1)
+                {
+                    showMsg("Error", "Duplicate Base Entry found.", InformationType.Error);
+                    return;
+                }
+
+                if (selectedObject.GRNDetails.Where(w => w.BaseType == "ASN" && w.ASNPOBaseDoc == dtl.ASNPOBaseDoc 
+                && w.ASNPOBaseId == dtl.ASNPOBaseId).Count() > 1)
+                {
+                    showMsg("Error", "Duplicate Base Entry found.", InformationType.Error);
+                    return;
+                }
+            }
+            // End ver 1.0.9
+
             if (selectedObject.InvoiceNo != null)
             {
                 if (selectedObject.IsValid == true)
@@ -495,7 +521,6 @@ namespace StarLaiPortal.Module.Controllers
             {
                 showMsg("Error", "Invoice number cannot blank.", InformationType.Error);
             }
-
         }
 
         private void SubmitGRN_CustomizePopupWindowParams(object sender, CustomizePopupWindowParamsEventArgs e)
