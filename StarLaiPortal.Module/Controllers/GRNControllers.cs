@@ -448,9 +448,15 @@ namespace StarLaiPortal.Module.Controllers
                     return;
                 }
             }
+
+            if (selectedObject.GRNDetails.Where(x => x.Received == 0).Count() == selectedObject.GRNDetails.Count())
+            {
+                showMsg("Error", "No receiving qty in this document.", InformationType.Error);
+                return;
+            }
             // End ver 1.0.9
 
-            if (selectedObject.InvoiceNo != null)
+                if (selectedObject.InvoiceNo != null)
             {
                 if (selectedObject.IsValid == true)
                 {

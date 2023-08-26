@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+// 2023-08-25 add FirstBinZone ver 1.0.9
+
 namespace StarLaiPortal.Module.BusinessObjects.View
 {
     [DefaultClassOptions]
@@ -267,5 +269,16 @@ namespace StarLaiPortal.Module.BusinessObjects.View
         {
             get; set;
         }
+
+        // Start ver 1.0.9
+        [XafDisplayName("Zone")]
+        [Appearance("FirstBinZone", Enabled = false)]
+        [Appearance("FirstBinZone1", BackColor = "#FF7C80", FontColor = "Black", Criteria = "PartialPicked > 0")]
+        [Index(38)]
+        public string FirstBinZone
+        {
+            get; set;
+        }
+        // End ver 1.0.9
     }
 }
