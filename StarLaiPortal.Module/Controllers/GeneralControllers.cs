@@ -668,12 +668,13 @@ namespace StarLaiPortal.Module.Controllers
                                 foreach (LoadDetails dtlload in newload.LoadDetails)
                                 {
                                     //PackList pl = os.FindObject<PackList>(CriteriaOperator.Parse("DocNum = ?", dtlload.PackList));
-
+                                    string picklistdone = null;
                                     foreach (PackListDetails dtlpack in newpack.PackListDetails)
                                     {
                                         if (dtlpack.Quantity > 0)
                                         {
                                             int picklistoid = 0;
+                                            bool pickitem = false;
                                             if (dtlpack.Bundle.BundleID == dtlload.Bundle.BundleID)
                                             {
                                                 foreach (PickListDetailsActual dtlactual in picklist.PickListDetailsActual)
@@ -690,8 +691,24 @@ namespace StarLaiPortal.Module.Controllers
                                                     if (dtlpack.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode && dtlpick.SOBaseDoc == so.DocNum &&
                                                         dtlpick.Oid == picklistoid)
                                                     {
-                                                        if (dtlpick.PickQty > 0)
+                                                        if (picklistdone != null)
                                                         {
+                                                            string[] picklistdoneoid = picklistdone.Split('@');
+                                                            foreach (string dtldonepick in picklistdoneoid)
+                                                            {
+                                                                if (dtldonepick != null)
+                                                                {
+                                                                    if (dtldonepick == dtlpick.Oid.ToString())
+                                                                    {
+                                                                        pickitem = true;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (dtlpick.PickQty > 0 && pickitem == false)
+                                                        {
+                                                            picklistdone = picklistdone + picklistoid + "@";
                                                             foreach (SalesOrderDetails dtlsales in so.SalesOrderDetails)
                                                             {
                                                                 if (dtlsales.ItemCode.ItemCode == dtlpack.ItemCode.ItemCode
@@ -716,7 +733,7 @@ namespace StarLaiPortal.Module.Controllers
                                                                     //    }
                                                                     //}
 
-                                                                    newdeliveryitem.Quantity = dtlpack.Quantity;
+                                                                    newdeliveryitem.Quantity = dtlpick.PickQty;
 
                                                                     //foreach (SalesOrderDetails dtlsales in so.SalesOrderDetails)
                                                                     //{
