@@ -152,6 +152,7 @@ namespace StarLaiPortal.WebApi.API.Controller
                     return Problem($"Update Failed. Pick List No. {plobj.DocNum} already {plobj.Status}.");
                 }
 
+                        var pickedQty = conn.Query<decimal>($"exec sp_afterdatasave 'PickListDetailsActual', '{itemjson}'").FirstOrDefault();
                 plobj.Picker = plOS.GetObjectByKey<ApplicationUser>(userId);
 
                 plOS.CommitChanges();
