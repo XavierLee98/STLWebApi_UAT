@@ -639,19 +639,19 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order
             { return Session.IsNewObject(this); }
         }
 
-        [Browsable(false)]
-        public bool IsValid
-        {
-            get
-            {
-                if (SalesOrderDetails.GroupBy(x => x.Location).Count() > 1)
-                {
-                    return true;
-                }
+        //[Browsable(false)]
+        //public bool IsValid
+        //{
+        //    get
+        //    {
+        //        if (SalesOrderDetails.GroupBy(x => x.Location).Count() > 1)
+        //        {
+        //            return true;
+        //        }
 
-                return false;
-            }
-        }
+        //        return false;
+        //    }
+        //}
 
         [Association("SalesOrder-SalesOrderDetails")]
         [XafDisplayName("Items")]

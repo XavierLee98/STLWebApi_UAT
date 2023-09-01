@@ -232,6 +232,7 @@ namespace StarLaiPortal.Module.Controllers
                         newdelivery.CustomerName = so.CustomerName;
                         newdelivery.Status = DocStatus.Submitted;
 
+                        string picklistdone = null;
                         foreach (LoadDetails dtlload in selectedObject.LoadDetails)
                         {
                             PackList pl = deiveryos.FindObject<PackList>(CriteriaOperator.Parse("DocNum = ?", dtlload.PackList));
@@ -283,7 +284,24 @@ namespace StarLaiPortal.Module.Controllers
                             newdelivery.CustomerGroup = pl.CustomerGroup;
                             foreach (PackListDetails dtlpack in pl.PackListDetails)
                             {
-                                if (picklistnum != dtlpack.PickListNo)
+                                bool pickitem = false;
+                                if (picklistdone != null)
+                                {
+                                    string[] picklistdoneoid = picklistdone.Split('@');
+                                    foreach (string dtldonepick in picklistdoneoid)
+                                    {
+                                        if (dtldonepick != null)
+                                        {
+                                            if (dtldonepick == dtlpack.PickListNo)
+                                            {
+                                                pickitem = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                //if (picklistnum != dtlpack.PickListNo)
+                                if (pickitem == false)
                                 {
                                     PickList picklist = ObjectSpace.FindObject<PickList>(CriteriaOperator.Parse("DocNum = ?", dtlpack.PickListNo));
 
@@ -293,7 +311,7 @@ namespace StarLaiPortal.Module.Controllers
                                         {
                                             if (dtlpick.PickQty > 0)
                                             {
-                                                DeliveryOrderDetails newdeliveryitem = ObjectSpace.CreateObject<DeliveryOrderDetails>();
+                                                DeliveryOrderDetails newdeliveryitem = deiveryos.CreateObject<DeliveryOrderDetails>();
 
                                                 newdeliveryitem.ItemCode = newdeliveryitem.Session.GetObjectByKey<vwItemMasters>(dtlpick.ItemCode.ItemCode);
                                                 newdeliveryitem.Quantity = dtlpick.PickQty;
@@ -336,6 +354,7 @@ namespace StarLaiPortal.Module.Controllers
                                     }
 
                                     picklistnum = dtlpack.PickListNo;
+                                    picklistdone = picklistdone + dtlpack.PickListNo + "@";
                                 }
                             }
                         }

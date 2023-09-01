@@ -9,6 +9,7 @@ using DevExpress.ExpressApp.Templates;
 using DevExpress.ExpressApp.Utils;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
+using DevExpress.Web.Internal.XmlProcessor;
 using DevExpress.Xpo.DB.Helpers;
 using StarLaiPortal.Module.BusinessObjects;
 using StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice;
@@ -468,14 +469,31 @@ namespace StarLaiPortal.Module.Controllers
                         newdelivery.CustomerName = so.CustomerName;
                         newdelivery.Status = DocStatus.Submitted;
 
-                        foreach(LoadDetails dtlload in load.LoadDetails)
+                        string picklistdone = null;
+                        foreach (LoadDetails dtlload in load.LoadDetails)
                         {
                             PackList pl = os.FindObject<PackList>(CriteriaOperator.Parse("DocNum = ?", dtlload.PackList));
 
                             newdelivery.CustomerGroup = pl.CustomerGroup;
                             foreach (PackListDetails dtlpack in pl.PackListDetails)
                             {
-                                if (picklistnum != dtlpack.PickListNo)
+                                bool pickitem = false;
+                                if (picklistdone != null)
+                                {
+                                    string[] picklistdoneoid = picklistdone.Split('@');
+                                    foreach (string dtldonepick in picklistdoneoid)
+                                    {
+                                        if (dtldonepick != null)
+                                        {
+                                            if (dtldonepick == dtlpack.PickListNo)
+                                            {
+                                                pickitem = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (pickitem == false)
                                 {
                                     PickList picklist = os.FindObject<PickList>(CriteriaOperator.Parse("DocNum = ?", dtlpack.PickListNo));
 
@@ -528,6 +546,7 @@ namespace StarLaiPortal.Module.Controllers
                                     }
 
                                     picklistnum = dtlpack.PickListNo;
+                                    picklistdone = picklistdone + dtlpack.PickListNo + "@";
                                 }
                             }
                         }

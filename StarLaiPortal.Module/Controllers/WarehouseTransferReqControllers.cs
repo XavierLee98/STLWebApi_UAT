@@ -89,8 +89,8 @@ namespace StarLaiPortal.Module.Controllers
                 {
                     this.WTRInquiryItem.Active.SetItemValue("Enabled", true);
                     // Start ver 1.0.9
-                    this.ExportWHReq.Active.SetItemValue("Enabled", true);
-                    this.ImportWHReq.Active.SetItemValue("Enabled", true);
+                    //this.ExportWHReq.Active.SetItemValue("Enabled", true);
+                    //this.ImportWHReq.Active.SetItemValue("Enabled", true);
                     // End ver 1.0.9
                 }
                 else
