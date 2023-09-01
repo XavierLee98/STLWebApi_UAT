@@ -21,6 +21,8 @@ using StarLaiPortal.Module.Controllers;
 using StarLaiPortal.Module.BusinessObjects.Pack_List;
 using StarLaiPortal.Module.BusinessObjects.Load;
 using StarLaiPortal.Module.BusinessObjects.Delivery_Order;
+using StarLaiPortal.Module.BusinessObjects.Setup;
+using System.Diagnostics;
 
 namespace StarLaiPortal.WebApi.API.Controller
 {
@@ -104,7 +106,13 @@ namespace StarLaiPortal.WebApi.API.Controller
                 dynamic dynamicObj = obj;
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
-                    var validatejson = conn.Query<ValidateJson>($"exec ValidateJsonInput 'PickListDetailsActual', '{JsonConvert.SerializeObject(obj)}'").FirstOrDefault();
+                    string jsonString = JsonConvert.SerializeObject(obj);
+
+                    jsonString = jsonString = jsonString.Replace("'", "''");
+
+                    var test = $"{obj}";
+
+                    var validatejson = conn.Query<ValidateJson>($"exec ValidateJsonInput 'PickListDetailsActual', '{jsonString}'").FirstOrDefault();
                     if (validatejson.Error)
                     {
                         return Problem(validatejson.ErrorMessage);
@@ -141,18 +149,30 @@ namespace StarLaiPortal.WebApi.API.Controller
 
                 IObjectSpace newObjectSpace = objectSpaceFactory.CreateObjectSpace<PickListDetailsActual>();
                 ISecurityStrategyBase security = securityProvider.GetSecurity();
-                var userId = security.UserId;
-                var userName = security.UserName;
-
                 IObjectSpace plOS = objectSpaceFactory.CreateObjectSpace<PickList>();
                 PickList plobj = plOS.FindObject<PickList>(CriteriaOperator.Parse("Oid = ?", dynamicObj.PickOid));
+
+                var userId = security.UserId;
+                var userName = security.UserName;
 
                 if (plobj.Status != DocStatus.Draft)
                 {
                     return Problem($"Update Failed. Pick List No. {plobj.DocNum} already {plobj.Status}.");
                 }
 
+                using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
+                {
+                    foreach (var line in plobj.PickListDetails)
+                    {
+                        string itemjson = JsonConvert.SerializeObject(new { picklist = dynamicObj.PickOid, picklistdetailoid = line.Oid });
                         var pickedQty = conn.Query<decimal>($"exec sp_afterdatasave 'PickListDetailsActual', '{itemjson}'").FirstOrDefault();
+
+                        var inputQty = detailsObject.Where(x => x.PickList == dynamicObj.PickOid && x.PickListDetailOid == line.Oid).Sum(y => (decimal)y.PickQty);
+
+                        if (pickedQty + inputQty > line.PlanQty) return Problem($"Actual pick quantity ({(pickedQty + inputQty):F2}) cannot more than plan quantity ({line.PlanQty:F2}). Please check picklist in portal.");
+                    }
+                }
+
                 plobj.Picker = plOS.GetObjectByKey<ApplicationUser>(userId);
 
                 plOS.CommitChanges();
@@ -171,27 +191,41 @@ namespace StarLaiPortal.WebApi.API.Controller
 
                 newObjectSpace.CommitChanges();
 
-                foreach (var aaa in objs)
+                //Update Quantity
+                using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
-                    using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
+                    foreach (var line in plobj.PickListDetails)
                     {
-                        string json = JsonConvert.SerializeObject(new { oid = aaa.Oid });
-                        conn.Query($"exec sp_afterdatasave 'PickListDetailsActual', '{json}'");
+                        string json = JsonConvert.SerializeObject(new { picklist = dynamicObj.PickOid, picklistdetailoid = line.Oid });
+                        var pickqty = conn.Query<decimal>($"exec sp_afterdatasave 'PickListDetailsActual', '{json}'").FirstOrDefault();
+
+                        if (pickqty > line.PlanQty) return Problem($"Actual pick quantity cannot more than plan quantity. Please check picklist in portal.");
+
+                        line.PickQty = pickqty;
+
+                        if (dynamicObj.PickListDetails != null && dynamicObj.PickListDetails.Count > 0)
+                        {
+                            var list = (IEnumerable<dynamic>)dynamicObj.PickListDetails;
+
+                            var selectedLine = list.Where(x => x.Oid == line.Oid).FirstOrDefault();
+
+                            if (selectedLine != null)
+                            {
+                                line.Reason = plOS.GetObjectByKey<DiscrepancyReason>((int)selectedLine.Reason);
+                            }
+                        }
                     }
                 }
 
-                using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
-                {
-                    string json = JsonConvert.SerializeObject(dynamicObj.PickListDetails);
-                    conn.Query($"exec sp_updateData 'SetPickListDetailsReason', '{json}'");
-                }
+                plobj.Status = DocStatus.Submitted;
+
+                plOS.CommitChanges();
 
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
                     string json = JsonConvert.SerializeObject(new { oid = objs.FirstOrDefault().PickList.Oid, username = userName });
                     conn.Query($"exec sp_afterdatasave 'PickListStatus', '{json}'");
                 }
-
 
                 IObjectSpace packos = objectSpaceFactory.CreateObjectSpace<PackList>();
                 IObjectSpace loados = objectSpaceFactory.CreateObjectSpace<Load>();
@@ -215,3 +249,19 @@ namespace StarLaiPortal.WebApi.API.Controller
 
     }
 }
+
+//foreach (var aaa in objs)
+//{
+//    using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
+//    {
+//        string json = JsonConvert.SerializeObject(new { oid = aaa.Oid });
+//        conn.Query($"exec sp_afterdatasave 'PickListDetailsActual', '{json}'");
+//    }
+//}
+
+//using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
+//{
+//    string json = JsonConvert.SerializeObject(dynamicObj.PickListDetails);
+//    conn.Query($"exec sp_updateData 'SetPickListDetailsReason', '{json}'");
+//}
+

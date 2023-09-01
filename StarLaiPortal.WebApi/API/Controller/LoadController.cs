@@ -79,7 +79,11 @@ namespace StarLaiPortal.WebApi.API.Controller
                 dynamic dynamicObj = obj;
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("ConnectionString")))
                 {
-                    var validatejson = conn.Query<ValidateJson>($"exec ValidateJsonInput 'Loading', '{JsonConvert.SerializeObject(obj)}'").FirstOrDefault();
+                    string jsonString = JsonConvert.SerializeObject(obj);
+
+                    jsonString = jsonString.Replace("'", "''");
+
+                    var validatejson = conn.Query<ValidateJson>($"exec ValidateJsonInput 'Loading', '{jsonString}'").FirstOrDefault();
                     if (validatejson.Error)
                     {
                         return Problem(validatejson.ErrorMessage);
