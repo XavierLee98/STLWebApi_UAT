@@ -11,6 +11,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.Validation;
 using DevExpress.Web.Internal.XmlProcessor;
 using DevExpress.Xpo.DB.Helpers;
+using DevExpress.XtraPrinting.Export.Pdf;
 using StarLaiPortal.Module.BusinessObjects;
 using StarLaiPortal.Module.BusinessObjects.Advanced_Shipment_Notice;
 using StarLaiPortal.Module.BusinessObjects.Delivery_Order;
@@ -461,6 +462,9 @@ namespace StarLaiPortal.Module.Controllers
 
                     if (so != null)
                     {
+                        Load currload = os.FindObject<Load>(CriteriaOperator.Parse("DocNum = ?", load.DocNum));
+
+
                         string picklistnum = null;
                         DeliveryOrder newdelivery = os.CreateObject<DeliveryOrder>();
 
@@ -469,84 +473,114 @@ namespace StarLaiPortal.Module.Controllers
                         newdelivery.CustomerName = so.CustomerName;
                         newdelivery.Status = DocStatus.Submitted;
 
-                        string picklistdone = null;
+                        //string picklistdone = null;
                         foreach (LoadDetails dtlload in load.LoadDetails)
                         {
+                            string picklistdone = null;
                             PackList pl = os.FindObject<PackList>(CriteriaOperator.Parse("DocNum = ?", dtlload.PackList));
 
                             newdelivery.CustomerGroup = pl.CustomerGroup;
                             foreach (PackListDetails dtlpack in pl.PackListDetails)
                             {
-                                bool pickitem = false;
-                                if (picklistdone != null)
+                                if (dtlload.Bundle.BundleID == dtlpack.Bundle.BundleID && dtlpack.PackList.DocNum == dtlload.BaseDoc)
                                 {
-                                    string[] picklistdoneoid = picklistdone.Split('@');
-                                    foreach (string dtldonepick in picklistdoneoid)
+                                    string picklistoid = null;
+                                    bool pickitem = false;
+                                    //if (picklistdone != null)
+                                    //{
+                                    //    string[] picklistdoneoid = picklistdone.Split('@');
+                                    //    foreach (string dtldonepick in picklistdoneoid)
+                                    //    {
+                                    //        if (dtldonepick != null)
+                                    //        {
+                                    //            if (dtldonepick == dtlpack.PickListNo)
+                                    //            {
+                                    //                pickitem = true;
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //}
+
+                                    if (pickitem == false)
                                     {
-                                        if (dtldonepick != null)
+                                        PickList picklist = os.FindObject<PickList>(CriteriaOperator.Parse("DocNum = ?", dtlpack.PickListNo));
+
+                                        foreach (PickListDetailsActual dtlactual in picklist.PickListDetailsActual)
                                         {
-                                            if (dtldonepick == dtlpack.PickListNo)
+                                            if (dtlpack.BaseId == dtlactual.Oid.ToString())
                                             {
-                                                pickitem = true;
+                                                picklistoid = dtlactual.PickListDetailOid.ToString();
+                                                break;
                                             }
                                         }
-                                    }
-                                }
 
-                                if (pickitem == false)
-                                {
-                                    PickList picklist = os.FindObject<PickList>(CriteriaOperator.Parse("DocNum = ?", dtlpack.PickListNo));
-
-                                    foreach (PickListDetails dtlpick in picklist.PickListDetails)
-                                    {
-                                        if (dtlpick.SOBaseDoc == so.DocNum)
+                                        foreach (PickListDetails dtlpick in picklist.PickListDetails)
                                         {
-                                            if (dtlpick.PickQty > 0)
+                                            if (picklistdone != null)
                                             {
-                                                DeliveryOrderDetails newdeliveryitem = os.CreateObject<DeliveryOrderDetails>();
-
-                                                newdeliveryitem.ItemCode = newdeliveryitem.Session.GetObjectByKey<vwItemMasters>(dtlpick.ItemCode.ItemCode);
-                                                newdeliveryitem.Quantity = dtlpick.PickQty;
-                                                newdeliveryitem.PackListLine = dtlpick.Oid.ToString();
-
-                                                //foreach (PickListDetailsActual dtlpickactual in picklist.PickListDetailsActual)
-                                                //{
-                                                //    if (dtlpickactual.FromBin != null && dtlpickactual.ItemCode.ItemCode == dtlpack.ItemCode.ItemCode)
-                                                //    {
-                                                //        newdeliveryitem.Warehouse = newdeliveryitem.Session.GetObjectByKey<vwWarehouse>(dtlpickactual.FromBin.Warehouse);
-                                                //        newdeliveryitem.Bin = newdeliveryitem.Session.GetObjectByKey<vwBin>(dtlpickactual.FromBin.BinCode);
-                                                //    }
-                                                //}
-
-                                                //temporary use picklist from bin
-                                                if (dtlload.Bin != null)
+                                                string[] picklistdoneoid = picklistdone.Split('@');
+                                                foreach (string dtldonepick in picklistdoneoid)
                                                 {
-                                                    newdeliveryitem.Warehouse = newdeliveryitem.Session.GetObjectByKey<vwWarehouse>(dtlload.Bin.Warehouse);
-                                                    newdeliveryitem.Bin = newdeliveryitem.Session.GetObjectByKey<vwBin>(dtlload.Bin.BinCode);
-                                                }
-
-                                                foreach (SalesOrderDetails dtlsales in so.SalesOrderDetails)
-                                                {
-                                                    if (dtlsales.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&
-                                                        dtlsales.Oid.ToString() == dtlpick.SOBaseId)
+                                                    if (dtldonepick != null)
                                                     {
-                                                        newdeliveryitem.Price = dtlsales.AdjustedPrice;
+                                                        if (dtldonepick == dtlpick.Oid.ToString())
+                                                        {
+                                                            pickitem = true;
+                                                        }
                                                     }
                                                 }
+                                            }
 
-                                                newdeliveryitem.BaseDoc = load.DocNum.ToString();
-                                                newdeliveryitem.BaseId = dtlload.Oid.ToString();
-                                                newdeliveryitem.SODocNum = reader.GetString(0);
-                                                newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
-                                                newdeliveryitem.PickListDocNum = dtlpack.PickListNo;
+                                            if (dtlpick.SOBaseDoc == so.DocNum && picklistoid == dtlpick.Oid.ToString() && pickitem == false)
+                                            {
+                                                if (dtlpick.PickQty > 0)
+                                                {
+                                                    DeliveryOrderDetails newdeliveryitem = os.CreateObject<DeliveryOrderDetails>();
 
-                                                newdelivery.DeliveryOrderDetails.Add(newdeliveryitem);
+                                                    newdeliveryitem.ItemCode = newdeliveryitem.Session.GetObjectByKey<vwItemMasters>(dtlpick.ItemCode.ItemCode);
+                                                    newdeliveryitem.Quantity = dtlpick.PickQty;
+                                                    newdeliveryitem.PackListLine = dtlpick.Oid.ToString();
+
+                                                    //foreach (PickListDetailsActual dtlpickactual in picklist.PickListDetailsActual)
+                                                    //{
+                                                    //    if (dtlpickactual.FromBin != null && dtlpickactual.ItemCode.ItemCode == dtlpack.ItemCode.ItemCode)
+                                                    //    {
+                                                    //        newdeliveryitem.Warehouse = newdeliveryitem.Session.GetObjectByKey<vwWarehouse>(dtlpickactual.FromBin.Warehouse);
+                                                    //        newdeliveryitem.Bin = newdeliveryitem.Session.GetObjectByKey<vwBin>(dtlpickactual.FromBin.BinCode);
+                                                    //    }
+                                                    //}
+
+                                                    //temporary use picklist from bin
+                                                    if (dtlload.Bin != null)
+                                                    {
+                                                        newdeliveryitem.Warehouse = newdeliveryitem.Session.GetObjectByKey<vwWarehouse>(dtlload.Bin.Warehouse);
+                                                        newdeliveryitem.Bin = newdeliveryitem.Session.GetObjectByKey<vwBin>(dtlload.Bin.BinCode);
+                                                    }
+
+                                                    foreach (SalesOrderDetails dtlsales in so.SalesOrderDetails)
+                                                    {
+                                                        if (dtlsales.ItemCode.ItemCode == dtlpick.ItemCode.ItemCode &&
+                                                            dtlsales.Oid.ToString() == dtlpick.SOBaseId)
+                                                        {
+                                                            newdeliveryitem.Price = dtlsales.AdjustedPrice;
+                                                        }
+                                                    }
+
+                                                    newdeliveryitem.BaseDoc = load.DocNum.ToString();
+                                                    newdeliveryitem.BaseId = dtlload.Oid.ToString();
+                                                    newdeliveryitem.SODocNum = reader.GetString(0);
+                                                    newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
+                                                    newdeliveryitem.PickListDocNum = dtlpack.PickListNo;
+
+                                                    newdelivery.DeliveryOrderDetails.Add(newdeliveryitem);
+
+                                                    picklistdone = picklistdone + dtlpick.Oid + "@";
+                                                }
                                             }
                                         }
-                                    }
 
-                                    picklistnum = dtlpack.PickListNo;
-                                    picklistdone = picklistdone + dtlpack.PickListNo + "@";
+                                        picklistnum = dtlpack.PickListNo;
+                                    }
                                 }
                             }
                         }
