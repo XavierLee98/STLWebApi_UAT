@@ -1359,11 +1359,11 @@ namespace StarLaiPortal.Module.Controllers
 
                         WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile" + cnt, script);
 
-                        //pl.PrintStatus = PrintStatus.Printed;
-                        //pl.PrintCount++;
+                        pl.PrintStatus = PrintStatus.Printed;
+                        pl.PrintCount++;
 
-                        //os.CommitChanges();
-                        //os.Refresh();
+                        os.CommitChanges();
+                        os.Refresh();
                         cnt++;
                     }
                     catch (Exception ex)
