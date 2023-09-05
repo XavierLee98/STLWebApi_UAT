@@ -2902,6 +2902,10 @@ namespace PortalIntegration
                         {
                             oDoc.Address = so.BillingAddressfield;
                         }
+                        if (oTargetDoc.Remarks != null)
+                        {
+                            oDoc.Comments = oTargetDoc.Remarks;
+                        }
 
                         int cnt = 0;
                         foreach (SalesOrderDetails dtl in so.SalesOrderDetails)

@@ -51,6 +51,7 @@ namespace StarLaiPortal.Module.Controllers
             // Start ver 0.1
             this.PrintDO.Active.SetItemValue("Enabled", false);
             // End ver 0.1
+            this.PrintDMBundleDO.Active.SetItemValue("Enabled", false);
         }
         protected override void OnViewControlsCreated()
         {
@@ -70,6 +71,7 @@ namespace StarLaiPortal.Module.Controllers
                     // Start ver 0.1
                     this.PrintDO.Active.SetItemValue("Enabled", true);
                     // End ver 0.1
+                    this.PrintDMBundleDO.Active.SetItemValue("Enabled", true);
                 }
                 else
                 {
@@ -81,6 +83,7 @@ namespace StarLaiPortal.Module.Controllers
                     // Start ver 0.1
                     this.PrintDO.Active.SetItemValue("Enabled", false);
                     // End ver 0.1
+                    this.PrintDMBundleDO.Active.SetItemValue("Enabled", false);
                 }
 
                 if (((DetailView)View).ViewEditMode == ViewEditMode.Edit)
@@ -100,6 +103,7 @@ namespace StarLaiPortal.Module.Controllers
                 // Start ver 0.1
                 this.PrintDO.Active.SetItemValue("Enabled", true);
                 // End ver 0.1
+                this.PrintDMBundleDO.Active.SetItemValue("Enabled", true);
             }
             else
             {
@@ -112,6 +116,7 @@ namespace StarLaiPortal.Module.Controllers
                 // Start ver 0.1
                 this.PrintDO.Active.SetItemValue("Enabled", false);
                 // End ver 0.1
+                this.PrintDMBundleDO.Active.SetItemValue("Enabled", false);
             }
         }
         protected override void OnDeactivated()
@@ -395,11 +400,14 @@ namespace StarLaiPortal.Module.Controllers
 
                         WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
 
-                        delivery.INVPrintCount = delivery.INVPrintCount + 1;
-                        delivery.INVPrintDate = DateTime.Now;
+                        IObjectSpace os = Application.CreateObjectSpace();
+                        DeliveryOrder trx = os.FindObject<DeliveryOrder>(new BinaryOperator("Oid", delivery.Oid));
 
-                        ObjectSpace.CommitChanges();
-                        ObjectSpace.Refresh();
+                        trx.INVPrintCount = trx.INVPrintCount + 1;
+                        trx.INVPrintDate = DateTime.Now;
+
+                        os.CommitChanges();
+                        os.Refresh();
                     }
                     catch (Exception ex)
                     {
@@ -462,11 +470,14 @@ namespace StarLaiPortal.Module.Controllers
 
                     WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
 
-                    delivery.BundleDOPrintCount = delivery.BundleDOPrintCount + 1;
-                    delivery.BundleDOPrintDate = DateTime.Now;
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    DeliveryOrder trx = os.FindObject<DeliveryOrder>(new BinaryOperator("Oid", delivery.Oid));
 
-                    ObjectSpace.CommitChanges();
-                    ObjectSpace.Refresh();
+                    trx.BundleDOPrintCount = trx.BundleDOPrintCount + 1;
+                    trx.BundleDOPrintDate = DateTime.Now;
+
+                    os.CommitChanges();
+                    os.Refresh();
                 }
                 catch (Exception ex)
                 {
@@ -524,11 +535,14 @@ namespace StarLaiPortal.Module.Controllers
 
                     WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
 
-                    delivery.DOPrintCount = delivery.DOPrintCount + 1;
-                    delivery.DOPrintDate = DateTime.Now;
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    DeliveryOrder trx = os.FindObject<DeliveryOrder>(new BinaryOperator("Oid", delivery.Oid));
 
-                    ObjectSpace.CommitChanges();
-                    ObjectSpace.Refresh();
+                    trx.DOPrintCount = trx.DOPrintCount + 1;
+                    trx.DOPrintDate = DateTime.Now;
+
+                    os.CommitChanges();
+                    os.Refresh();
                 }
                 catch (Exception ex)
                 {
@@ -541,5 +555,70 @@ namespace StarLaiPortal.Module.Controllers
             }
         }
         // End ver 0.1
+
+        private void PrintDMBundleDO_Execute(object sender, SimpleActionExecuteEventArgs e)
+        {
+            if (e.SelectedObjects.Count == 1)
+            {
+                string strServer;
+                string strDatabase;
+                string strUserID;
+                string strPwd;
+                string filename;
+
+                SqlConnection conn = new SqlConnection(genCon.getConnectionString());
+                DeliveryOrder delivery = (DeliveryOrder)View.CurrentObject;
+                ApplicationUser user = (ApplicationUser)SecuritySystem.CurrentUser;
+
+                try
+                {
+                    ReportDocument doc = new ReportDocument();
+                    strServer = ConfigurationManager.AppSettings.Get("SQLserver").ToString();
+                    doc.Load(HttpContext.Current.Server.MapPath("~\\Reports\\BundleDOHalfLetter.rpt"));
+                    strDatabase = conn.Database;
+                    strUserID = ConfigurationManager.AppSettings.Get("SQLID").ToString();
+                    strPwd = ConfigurationManager.AppSettings.Get("SQLPass").ToString();
+                    doc.DataSourceConnections[0].SetConnection(strServer, strDatabase, strUserID, strPwd);
+                    doc.Refresh();
+
+                    doc.SetParameterValue("dockey@", delivery.Oid);
+                    doc.SetParameterValue("dbName@", conn.Database);
+                    doc.SetParameterValue("@printedBy", user.Staff.StaffName);
+
+                    filename = ConfigurationManager.AppSettings.Get("ReportPath").ToString() + conn.Database
+                        + "_" + delivery.Oid + "_" + user.UserName + "_DMBundleDO_"
+                        + DateTime.Parse(delivery.DocDate.ToString()).ToString("yyyyMMdd") + ".pdf";
+
+                    doc.ExportToDisk(ExportFormatType.PortableDocFormat, filename);
+                    doc.Close();
+                    doc.Dispose();
+
+                    string url = HttpContext.Current.Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority +
+                        ConfigurationManager.AppSettings.Get("PrintPath").ToString() + conn.Database
+                        + "_" + delivery.Oid + "_" + user.UserName + "_DMBundleDO_"
+                        + DateTime.Parse(delivery.DocDate.ToString()).ToString("yyyyMMdd") + ".pdf";
+                    var script = "window.open('" + url + "');";
+
+                    WebWindow.CurrentRequestWindow.RegisterStartupScript("DownloadFile", script);
+
+                    IObjectSpace os = Application.CreateObjectSpace();
+                    DeliveryOrder trx = os.FindObject<DeliveryOrder>(new BinaryOperator("Oid", delivery.Oid));
+
+                    trx.BundleDOPrintCount = trx.BundleDOPrintCount + 1;
+                    trx.BundleDOPrintDate = DateTime.Now;
+
+                    os.CommitChanges();
+                    os.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    showMsg("Fail", ex.Message, InformationType.Error);
+                }
+            }
+            else
+            {
+                showMsg("Fail", "Please select one DO only.", InformationType.Error);
+            }
+        }
     }
 }

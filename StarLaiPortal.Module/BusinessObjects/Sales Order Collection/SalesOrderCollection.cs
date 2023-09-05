@@ -14,6 +14,7 @@ using StarLaiPortal.Module.BusinessObjects.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -395,6 +396,19 @@ namespace StarLaiPortal.Module.BusinessObjects.Sales_Order_Collection
             set
             {
                 SetPropertyValue("PaymentAmount", ref _PaymentAmount, value);
+            }
+        }
+
+        private string _Remarks;
+        [XafDisplayName("Remarks")]
+        [Size(254)]
+        [Index(31), VisibleInDetailView(true), VisibleInListView(false), VisibleInLookupListView(false)]
+        public string Remarks
+        {
+            get { return _Remarks; }
+            set
+            {
+                SetPropertyValue("Remarks", ref _Remarks, value);
             }
         }
 
