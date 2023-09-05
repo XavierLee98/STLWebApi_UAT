@@ -36,6 +36,7 @@
             this.PreviewInv = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             this.PreviewBundleDO = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             this.PrintDO = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
+            this.PrintDMBundleDO = new DevExpress.ExpressApp.Actions.SimpleAction(this.components);
             // 
             // DOCopyFromLoading
             // 
@@ -75,7 +76,7 @@
             // 
             // PreviewDO
             // 
-            this.PreviewDO.Caption = "Preview DO";
+            this.PreviewDO.Caption = "View DO";
             this.PreviewDO.Category = "ObjectsCreation";
             this.PreviewDO.ConfirmationMessage = null;
             this.PreviewDO.Id = "PreviewDO";
@@ -84,7 +85,7 @@
             // 
             // PreviewInv
             // 
-            this.PreviewInv.Caption = "Preview Invoice";
+            this.PreviewInv.Caption = "Invoice";
             this.PreviewInv.Category = "ObjectsCreation";
             this.PreviewInv.ConfirmationMessage = null;
             this.PreviewInv.Id = "PreviewInv";
@@ -93,7 +94,7 @@
             // 
             // PreviewBundleDO
             // 
-            this.PreviewBundleDO.Caption = "Preview Bundle DO";
+            this.PreviewBundleDO.Caption = "Bundle DO";
             this.PreviewBundleDO.Category = "ObjectsCreation";
             this.PreviewBundleDO.ConfirmationMessage = null;
             this.PreviewBundleDO.Id = "PreviewBundleDO";
@@ -109,6 +110,15 @@
             this.PrintDO.ToolTip = null;
             this.PrintDO.Execute += new DevExpress.ExpressApp.Actions.SimpleActionExecuteEventHandler(this.PrintDO_Execute);
             // 
+            // PrintDMBundleDO
+            // 
+            this.PrintDMBundleDO.Caption = "DM Bundle";
+            this.PrintDMBundleDO.Category = "ObjectsCreation";
+            this.PrintDMBundleDO.ConfirmationMessage = null;
+            this.PrintDMBundleDO.Id = "PrintDMBundleDO";
+            this.PrintDMBundleDO.ToolTip = null;
+            this.PrintDMBundleDO.Execute += new DevExpress.ExpressApp.Actions.SimpleActionExecuteEventHandler(this.PrintDMBundleDO_Execute);
+            // 
             // DeliveryOrderControllers
             // 
             this.Actions.Add(this.DOCopyFromLoading);
@@ -118,6 +128,7 @@
             this.Actions.Add(this.PreviewInv);
             this.Actions.Add(this.PreviewBundleDO);
             this.Actions.Add(this.PrintDO);
+            this.Actions.Add(this.PrintDMBundleDO);
 
         }
 
@@ -130,5 +141,6 @@
         private DevExpress.ExpressApp.Actions.SimpleAction PreviewInv;
         private DevExpress.ExpressApp.Actions.SimpleAction PreviewBundleDO;
         private DevExpress.ExpressApp.Actions.SimpleAction PrintDO;
+        private DevExpress.ExpressApp.Actions.SimpleAction PrintDMBundleDO;
     }
 }

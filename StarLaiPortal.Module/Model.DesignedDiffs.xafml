@@ -136,12 +136,19 @@
         <ActionLink ActionId="PreviewDO" Index="84" />
         <ActionLink ActionId="PrintDO" Index="85" />
         <ActionLink ActionId="PreviewInv" Index="86" />
-        <ActionLink ActionId="PreviewBundleDO" Index="87" />
-        <ActionLink ActionId="PreviewPONoCost" Index="88" />
-        <ActionLink ActionId="PreviewSFR" Index="89" />
-        <ActionLink ActionId="PreviewSQ" Index="90" />
-        <ActionLink ActionId="PreviewSRefund" Index="91" />
-        <ActionLink ActionId="PrintARDownpayment" Index="92" />
+        <ActionLink ActionId="PrintDMBundleDO" Index="87" />
+        <ActionLink ActionId="PreviewBundleDO" Index="88" />
+        <ActionLink ActionId="PreviewPONoCost" Index="89" />
+        <ActionLink ActionId="PreviewSFR" Index="90" />
+        <ActionLink ActionId="PreviewSQ" Index="91" />
+        <ActionLink ActionId="PreviewSRefund" Index="92" />
+        <ActionLink ActionId="PrintARDownpayment" Index="93" />
+        <ActionLink ActionId="ApproveAppARDPC_Pop" Index="94" />
+        <ActionLink ActionId="CancelDPCancel" Index="95" />
+        <ActionLink ActionId="CancelSO" Index="96" />
+        <ActionLink ActionId="CloseSO" Index="97" />
+        <ActionLink ActionId="CopyFromDownpayment" Index="98" />
+        <ActionLink ActionId="PrintBundle" Index="99" />
       </ActionContainer>
     </ActionToContainerMapping>
   </ActionDesign>
