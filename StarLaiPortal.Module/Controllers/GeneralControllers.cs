@@ -660,6 +660,7 @@ namespace StarLaiPortal.Module.Controllers
                                                                 }
 
                                                                 newdeliveryitem.SOBaseID = dtlpick.SOBaseId;
+                                                                newdelivery.CustomerGroup = picklist.CustomerGroup;
                                                             }
                                                         }
 

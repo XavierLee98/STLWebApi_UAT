@@ -34,6 +34,7 @@ using System.Web.UI;
 
 // 2023-07-28 block submit if no address for OC and OS ver 1.0.7
 // 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
+// 2023-09-07 check stock when approve ver 1.0.8.1
 
 namespace StarLaiPortal.Module.Controllers
 {
@@ -896,192 +897,219 @@ namespace StarLaiPortal.Module.Controllers
                     {
                         foreach (SalesQuotation dtl in e.SelectedObjects)
                         {
+                            // Start ver 1.0.8.1
+                            bool process = true;
+                            // End ver 1.0.8.1
                             IObjectSpace sos = Application.CreateObjectSpace();
                             SalesQuotation sq = sos.FindObject<SalesQuotation>(new BinaryOperator("Oid", dtl.Oid));
 
-                            if (sq.Status == DocStatus.Submitted && sq.AppStatus == ApprovalStatusType.Required_Approval)
+                            // Start ver 1.0.8.1
+                            if (sq.AppUser != null)
                             {
-                                ApprovalStatusType appstatus = ApprovalStatusType.Required_Approval;
-
-                                if (appstatus == ApprovalStatusType.Not_Applicable)
-                                    appstatus = ApprovalStatusType.Required_Approval;
-
-                                if (p.IsErr) return;
-                                if (appstatus == ApprovalStatusType.Required_Approval && p.AppStatus == ApprovalActions.NA)
+                                if (!sq.AppUser.Contains(user.Staff.StaffName))
                                 {
-                                    showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
-                                    return;
-                                }
-                                else if (appstatus == ApprovalStatusType.Approved && p.AppStatus == ApprovalActions.Yes)
-                                {
-                                    showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
-                                    return;
-                                }
-                                else if (appstatus == ApprovalStatusType.Rejected && p.AppStatus == ApprovalActions.No)
-                                {
-                                    showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
-                                    return;
-                                }
-                                if (p.AppStatus == ApprovalActions.NA)
-                                {
-                                    appstatus = ApprovalStatusType.Required_Approval;
-                                }
-                                if (p.AppStatus == ApprovalActions.Yes)
-                                {
-                                    appstatus = ApprovalStatusType.Approved;
-                                }
-                                if (p.AppStatus == ApprovalActions.No)
-                                {
-                                    appstatus = ApprovalStatusType.Rejected;
-                                }
-
-                                SalesQuotationAppStatus ds = sos.CreateObject<SalesQuotationAppStatus>();
-                                ds.PurchaseOrders = sos.GetObjectByKey<SalesQuotation>(sq.Oid);
-                                ds.AppStatus = appstatus;
-                                if (appstatus == ApprovalStatusType.Rejected)
-                                {
-                                    //sq.Status = DocStatus.New;
-                                    ds.AppRemarks =
-                                        System.Environment.NewLine + "(Reject User: " + user.Staff.StaffName + ")" +
-                                        System.Environment.NewLine + "(Reason: Approval Rejected) - " + p.ParamString;
-                                    ds.CreateUser = sos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
-                                }
-                                else
-                                {
-                                    ds.AppRemarks = System.Environment.NewLine + "(Approved User: " + user.Staff.StaffName + ") - " + p.ParamString;
-                                }
-                                sq.SalesQuotationAppStatus.Add(ds);
-
-                                sos.CommitChanges();
-                                sos.Refresh();
-
-                                totaldoc++;
-
-                                #region approval
-
-                                List<string> ToEmails = new List<string>();
-                                string emailbody = "";
-                                string emailsubject = "";
-                                string emailaddress = "";
-                                Guid emailuser;
-                                DateTime emailtime = DateTime.Now;
-
-                                string getapproval = "EXEC sp_Approval '" + user.UserName + "', '" + sq.Oid + "', 'SalesQuotation', " + ((int)appstatus);
-                                if (conn.State == ConnectionState.Open)
-                                {
-                                    conn.Close();
-                                }
-                                conn.Open();
-                                SqlCommand cmd = new SqlCommand(getapproval, conn);
-                                SqlDataReader reader = cmd.ExecuteReader();
-                                while (reader.Read())
-                                {
-                                    if (reader.GetString(1) != "")
-                                    {
-                                        emailbody = "Dear Sir/Madam, " + System.Environment.NewLine + System.Environment.NewLine +
-                                                  reader.GetString(3) + System.Environment.NewLine + GeneralSettings.appurl + reader.GetString(2) +
-                                                  System.Environment.NewLine + System.Environment.NewLine;
-
-                                        if (appstatus == ApprovalStatusType.Approved)
-                                            emailsubject = "Sales Quotation Approval";
-                                        else if (appstatus == ApprovalStatusType.Rejected)
-                                            emailsubject = "Sales Quotation Approval Rejected";
-
-                                        emailaddress = reader.GetString(1);
-                                        emailuser = reader.GetGuid(0);
-
-                                        ToEmails.Add(emailaddress);
-                                    }
-                                }
-                                conn.Close();
-
-                                if (ToEmails.Count > 0)
-                                {
-                                    if (genCon.SendEmail(emailsubject, emailbody, ToEmails) == 1)
-                                    {
-                                    }
-                                }
-                                #endregion
-
-                                //ObjectSpace.CommitChanges(); //This line persists created object(s).
-                                //ObjectSpace.Refresh();
-
-                                IObjectSpace tos = Application.CreateObjectSpace();
-                                SalesQuotation trx = tos.FindObject<SalesQuotation>(new BinaryOperator("Oid", dtl.Oid));
-
-                                if (trx.AppStatus == ApprovalStatusType.Approved && trx.Status == DocStatus.Submitted)
-                                {
-                                    #region Add SO
-                                    IObjectSpace aos = Application.CreateObjectSpace();
-                                    SalesOrder newSO = aos.CreateObject<SalesOrder>();
-
-                                    string docprefix = genCon.GetDocPrefix();
-                                    newSO.DocNum = genCon.GenerateDocNum(DocTypeList.SO, sos, TransferType.NA, 0, docprefix);
-
-                                    if (trx.Customer != null)
-                                    {
-                                        newSO.Customer = newSO.Session.GetObjectByKey<vwBusniessPartner>(trx.Customer.BPCode);
-                                    }
-                                    newSO.CustomerName = trx.CustomerName;
-                                    if (trx.Transporter != null)
-                                    {
-                                        newSO.Transporter = newSO.Session.GetObjectByKey<vwTransporter>(trx.Transporter.TransporterID);
-                                    }
-                                    newSO.ContactNo = trx.ContactNo;
-                                    if (trx.ContactPerson != null)
-                                    {
-                                        newSO.ContactPerson = newSO.Session.GetObjectByKey<vwSalesPerson>(trx.ContactPerson.SlpCode);
-                                    }
-                                    if (trx.PaymentTerm != null)
-                                    {
-                                        newSO.PaymentTerm = newSO.Session.GetObjectByKey<vwPaymentTerm>(trx.PaymentTerm.GroupNum);
-                                    }
-                                    if (trx.Series != null)
-                                    {
-                                        newSO.Series = newSO.Session.GetObjectByKey<vwSeries>(trx.Series.Series);
-                                    }
-                                    if (trx.Priority != null)
-                                    {
-                                        newSO.Priority = newSO.Session.GetObjectByKey<PriorityType>(trx.Priority.Oid);
-                                    }
-                                    if (trx.BillingAddress != null)
-                                    {
-                                        newSO.BillingAddress = newSO.Session.GetObjectByKey<vwBillingAddress>(trx.BillingAddress.PriKey);
-                                    }
-                                    newSO.BillingAddressfield = trx.BillingAddressfield;
-                                    if (trx.ShippingAddress != null)
-                                    {
-                                        newSO.ShippingAddress = newSO.Session.GetObjectByKey<vwShippingAddress>(trx.ShippingAddress.PriKey);
-                                    }
-                                    newSO.ShippingAddressfield = trx.ShippingAddressfield;
-                                    newSO.Remarks = trx.Remarks;
-                                    newSO.Attn = trx.Attn;
-                                    newSO.RefNo = trx.RefNo;
-
-                                    foreach (SalesQuotationDetails detail in trx.SalesQuotationDetails)
-                                    {
-                                        SalesOrderDetails newsodetails = aos.CreateObject<SalesOrderDetails>();
-
-                                        newsodetails.ItemCode = newsodetails.Session.GetObjectByKey<vwItemMasters>(detail.ItemCode.ItemCode);
-                                        newsodetails.ItemDesc = detail.ItemDesc;
-                                        newsodetails.Model = detail.Model;
-                                        newsodetails.CatalogNo = detail.CatalogNo;
-                                        if (detail.Location != null)
-                                        {
-                                            newsodetails.Location = newsodetails.Session.GetObjectByKey<vwWarehouse>(detail.Location.WarehouseCode);
-                                        }
-                                        newsodetails.Quantity = detail.Quantity;
-                                        newsodetails.Price = detail.Price;
-                                        newsodetails.AdjustedPrice = detail.AdjustedPrice;
-                                        newsodetails.BaseDoc = trx.DocNum;
-                                        newsodetails.BaseId = detail.Oid.ToString();
-                                        newSO.SalesOrderDetails.Add(newsodetails);
-                                    }
-
-                                    aos.CommitChanges();
-                                    #endregion
+                                    showMsg("Failed", "Document already approved, please refresh data.", InformationType.Error);
+                                    process = false;
                                 }
                             }
+
+                            if (sq.IsValid4 == true)
+                            {
+                                showMsg("Error", "Sales qty not allow over warehouse available qty.", InformationType.Error);
+                                process = false;
+                            }
+                            // End ver 1.0.8.1
+
+                            // Start ver 1.0.8.1
+                            if (process == true)
+                            {
+                            // End ver 1.0.8.1
+                                if (sq.Status == DocStatus.Submitted && sq.AppStatus == ApprovalStatusType.Required_Approval)
+                                {
+                                    ApprovalStatusType appstatus = ApprovalStatusType.Required_Approval;
+
+                                    if (appstatus == ApprovalStatusType.Not_Applicable)
+                                        appstatus = ApprovalStatusType.Required_Approval;
+
+                                    if (p.IsErr) return;
+                                    if (appstatus == ApprovalStatusType.Required_Approval && p.AppStatus == ApprovalActions.NA)
+                                    {
+                                        showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
+                                        return;
+                                    }
+                                    else if (appstatus == ApprovalStatusType.Approved && p.AppStatus == ApprovalActions.Yes)
+                                    {
+                                        showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
+                                        return;
+                                    }
+                                    else if (appstatus == ApprovalStatusType.Rejected && p.AppStatus == ApprovalActions.No)
+                                    {
+                                        showMsg("Failed", "Same Approval Status is not allowed.", InformationType.Error);
+                                        return;
+                                    }
+                                    if (p.AppStatus == ApprovalActions.NA)
+                                    {
+                                        appstatus = ApprovalStatusType.Required_Approval;
+                                    }
+                                    if (p.AppStatus == ApprovalActions.Yes)
+                                    {
+                                        appstatus = ApprovalStatusType.Approved;
+                                    }
+                                    if (p.AppStatus == ApprovalActions.No)
+                                    {
+                                        appstatus = ApprovalStatusType.Rejected;
+                                    }
+
+                                    SalesQuotationAppStatus ds = sos.CreateObject<SalesQuotationAppStatus>();
+                                    ds.PurchaseOrders = sos.GetObjectByKey<SalesQuotation>(sq.Oid);
+                                    ds.AppStatus = appstatus;
+                                    if (appstatus == ApprovalStatusType.Rejected)
+                                    {
+                                        //sq.Status = DocStatus.New;
+                                        ds.AppRemarks =
+                                            System.Environment.NewLine + "(Reject User: " + user.Staff.StaffName + ")" +
+                                            System.Environment.NewLine + "(Reason: Approval Rejected) - " + p.ParamString;
+                                        ds.CreateUser = sos.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                                    }
+                                    else
+                                    {
+                                        ds.AppRemarks = System.Environment.NewLine + "(Approved User: " + user.Staff.StaffName + ") - " + p.ParamString;
+                                    }
+                                    sq.SalesQuotationAppStatus.Add(ds);
+
+                                    sos.CommitChanges();
+                                    sos.Refresh();
+
+                                    totaldoc++;
+
+                                    #region approval
+
+                                    List<string> ToEmails = new List<string>();
+                                    string emailbody = "";
+                                    string emailsubject = "";
+                                    string emailaddress = "";
+                                    Guid emailuser;
+                                    DateTime emailtime = DateTime.Now;
+
+                                    string getapproval = "EXEC sp_Approval '" + user.UserName + "', '" + sq.Oid + "', 'SalesQuotation', " + ((int)appstatus);
+                                    if (conn.State == ConnectionState.Open)
+                                    {
+                                        conn.Close();
+                                    }
+                                    conn.Open();
+                                    SqlCommand cmd = new SqlCommand(getapproval, conn);
+                                    SqlDataReader reader = cmd.ExecuteReader();
+                                    while (reader.Read())
+                                    {
+                                        if (reader.GetString(1) != "")
+                                        {
+                                            emailbody = "Dear Sir/Madam, " + System.Environment.NewLine + System.Environment.NewLine +
+                                                      reader.GetString(3) + System.Environment.NewLine + GeneralSettings.appurl + reader.GetString(2) +
+                                                      System.Environment.NewLine + System.Environment.NewLine;
+
+                                            if (appstatus == ApprovalStatusType.Approved)
+                                                emailsubject = "Sales Quotation Approval";
+                                            else if (appstatus == ApprovalStatusType.Rejected)
+                                                emailsubject = "Sales Quotation Approval Rejected";
+
+                                            emailaddress = reader.GetString(1);
+                                            emailuser = reader.GetGuid(0);
+
+                                            ToEmails.Add(emailaddress);
+                                        }
+                                    }
+                                    conn.Close();
+
+                                    if (ToEmails.Count > 0)
+                                    {
+                                        if (genCon.SendEmail(emailsubject, emailbody, ToEmails) == 1)
+                                        {
+                                        }
+                                    }
+                                    #endregion
+
+                                    //ObjectSpace.CommitChanges(); //This line persists created object(s).
+                                    //ObjectSpace.Refresh();
+
+                                    IObjectSpace tos = Application.CreateObjectSpace();
+                                    SalesQuotation trx = tos.FindObject<SalesQuotation>(new BinaryOperator("Oid", dtl.Oid));
+
+                                    if (trx.AppStatus == ApprovalStatusType.Approved && trx.Status == DocStatus.Submitted)
+                                    {
+                                        #region Add SO
+                                        IObjectSpace aos = Application.CreateObjectSpace();
+                                        SalesOrder newSO = aos.CreateObject<SalesOrder>();
+
+                                        string docprefix = genCon.GetDocPrefix();
+                                        newSO.DocNum = genCon.GenerateDocNum(DocTypeList.SO, sos, TransferType.NA, 0, docprefix);
+
+                                        if (trx.Customer != null)
+                                        {
+                                            newSO.Customer = newSO.Session.GetObjectByKey<vwBusniessPartner>(trx.Customer.BPCode);
+                                        }
+                                        newSO.CustomerName = trx.CustomerName;
+                                        if (trx.Transporter != null)
+                                        {
+                                            newSO.Transporter = newSO.Session.GetObjectByKey<vwTransporter>(trx.Transporter.TransporterID);
+                                        }
+                                        newSO.ContactNo = trx.ContactNo;
+                                        if (trx.ContactPerson != null)
+                                        {
+                                            newSO.ContactPerson = newSO.Session.GetObjectByKey<vwSalesPerson>(trx.ContactPerson.SlpCode);
+                                        }
+                                        if (trx.PaymentTerm != null)
+                                        {
+                                            newSO.PaymentTerm = newSO.Session.GetObjectByKey<vwPaymentTerm>(trx.PaymentTerm.GroupNum);
+                                        }
+                                        if (trx.Series != null)
+                                        {
+                                            newSO.Series = newSO.Session.GetObjectByKey<vwSeries>(trx.Series.Series);
+                                        }
+                                        if (trx.Priority != null)
+                                        {
+                                            newSO.Priority = newSO.Session.GetObjectByKey<PriorityType>(trx.Priority.Oid);
+                                        }
+                                        if (trx.BillingAddress != null)
+                                        {
+                                            newSO.BillingAddress = newSO.Session.GetObjectByKey<vwBillingAddress>(trx.BillingAddress.PriKey);
+                                        }
+                                        newSO.BillingAddressfield = trx.BillingAddressfield;
+                                        if (trx.ShippingAddress != null)
+                                        {
+                                            newSO.ShippingAddress = newSO.Session.GetObjectByKey<vwShippingAddress>(trx.ShippingAddress.PriKey);
+                                        }
+                                        newSO.ShippingAddressfield = trx.ShippingAddressfield;
+                                        newSO.Remarks = trx.Remarks;
+                                        newSO.Attn = trx.Attn;
+                                        newSO.RefNo = trx.RefNo;
+
+                                        foreach (SalesQuotationDetails detail in trx.SalesQuotationDetails)
+                                        {
+                                            SalesOrderDetails newsodetails = aos.CreateObject<SalesOrderDetails>();
+
+                                            newsodetails.ItemCode = newsodetails.Session.GetObjectByKey<vwItemMasters>(detail.ItemCode.ItemCode);
+                                            newsodetails.ItemDesc = detail.ItemDesc;
+                                            newsodetails.Model = detail.Model;
+                                            newsodetails.CatalogNo = detail.CatalogNo;
+                                            if (detail.Location != null)
+                                            {
+                                                newsodetails.Location = newsodetails.Session.GetObjectByKey<vwWarehouse>(detail.Location.WarehouseCode);
+                                            }
+                                            newsodetails.Quantity = detail.Quantity;
+                                            newsodetails.Price = detail.Price;
+                                            newsodetails.AdjustedPrice = detail.AdjustedPrice;
+                                            newsodetails.BaseDoc = trx.DocNum;
+                                            newsodetails.BaseId = detail.Oid.ToString();
+                                            newSO.SalesOrderDetails.Add(newsodetails);
+                                        }
+
+                                        aos.CommitChanges();
+                                        #endregion
+                                    }
+                                }
+                            // Start ver 1.0.8.1
+                            }
+                            // End ver 1.0.8.1
                         }
 
                         showMsg("Info", "Total Document : " + totaldoc + " Approval Done.", InformationType.Info);
@@ -1121,6 +1149,14 @@ namespace StarLaiPortal.Module.Controllers
                                 return;
                             }
                         }
+
+                        // Start ver 1.0.8.1
+                        if (sq.IsValid4 == true)
+                        {
+                            showMsg("Error", "Sales qty not allow over warehouse available qty.", InformationType.Error);
+                            return;
+                        }
+                        // End ver 1.0.8.1
 
                         ApprovalStatusType appstatus = ApprovalStatusType.Required_Approval;
 

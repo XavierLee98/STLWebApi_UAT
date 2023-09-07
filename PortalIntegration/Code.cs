@@ -3006,114 +3006,149 @@ namespace PortalIntegration
             {
                 //foreach (SalesOrderCollectionDetails payment in oTargetDoc.SalesOrderCollectionDetails)
                 //{
-                    if (detail.SalesOrder == sodocnum)
+                if (detail.SalesOrder == sodocnum)
+                {
+                    IObjectSpace os = ObjectSpaceProvider.CreateObjectSpace();
+                    SalesOrder so = os.FindObject<SalesOrder>(CriteriaOperator.Parse("DocNum = ?", sodocnum));
+
+                    if (so != null)
                     {
-                        IObjectSpace os = ObjectSpaceProvider.CreateObjectSpace();
-                        SalesOrder so = os.FindObject<SalesOrder>(CriteriaOperator.Parse("DocNum = ?", sodocnum));
+                        Guid g;
+                        // Create and display the value of two GUIDs.
+                        g = Guid.NewGuid();
 
-                        if (so != null)
+                        SAPbobsCOM.Payments oDoc = null;
+
+                        oDoc = (SAPbobsCOM.Payments)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+
+                        oDoc.CardCode = so.Customer.BPCode;
+                        oDoc.CardName = so.CustomerName;
+                        oDoc.DocDate = oTargetDoc.DocDate;
+                        oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
+                        if (so.BillingAddressfield != null)
                         {
-                            Guid g;
-                            // Create and display the value of two GUIDs.
-                            g = Guid.NewGuid();
+                            oDoc.Address = so.BillingAddressfield;
+                        }
 
-                            SAPbobsCOM.Payments oDoc = null;
-
-                            oDoc = (SAPbobsCOM.Payments)sap.oCom.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
-
-                            oDoc.CardCode = so.Customer.BPCode;
-                            oDoc.CardName = so.CustomerName;
-                            oDoc.DocDate = oTargetDoc.DocDate;
-                            oDoc.UserFields.Fields.Item("U_PortalDocNum").Value = oTargetDoc.DocNum;
-                            if (so.BillingAddressfield != null)
+                        if (detail.PaymentAmount > 0)
+                        {
+                            if (oTargetDoc.PaymentType.PaymentMean == "CASH")
                             {
-                                oDoc.Address = so.BillingAddressfield;
+                                oDoc.CashSum += Convert.ToDouble(detail.PaymentAmount);
+                                if (detail.GLAccount != null)
+                                {
+                                    // Start ver 1.0.8
+                                    //oDoc.CashAccount = detail.GLAccount.AcctCode;
+                                    oDoc.CashAccount = oTargetDoc.PaymentType.GLAccount;
+                                    // End ver 1.0.8
+                                }
                             }
 
-                                if (detail.PaymentAmount > 0)
+                            if (oTargetDoc.PaymentType.PaymentMean == "CCARD")
+                            {
+                                oDoc.CreditCards.CreditSum += Convert.ToDouble(detail.PaymentAmount);
+                                // Start ver 1.0.8
+                                //oDoc.CreditCards.CreditAcct = detail.GLAccount.AcctCode;
+                                oDoc.CreditCards.CreditAcct = oTargetDoc.PaymentType.GLAccount;
+                                // End ver 1.0.8
+                                oDoc.CreditCards.PaymentMethodCode = oTargetDoc.PaymentType.CCardPayMethodCode;
+
+                                //oDoc.CreditCards.VoucherNum = oTargetDoc.ReferenceNum;
+                                int countchar = 0;
+                                if (oTargetDoc.ReferenceNum != null)
                                 {
-                                    if (oTargetDoc.PaymentType.PaymentMean == "CASH")
+                                    foreach (char c in oTargetDoc.ReferenceNum)
                                     {
-                                        oDoc.CashSum += Convert.ToDouble(detail.PaymentAmount);
-                                    if (detail.GLAccount != null)
+                                        countchar++;
+                                    }
+                                    if (countchar >= 19)
                                     {
-                                        // Start ver 1.0.8
-                                        //oDoc.CashAccount = detail.GLAccount.AcctCode;
-                                        oDoc.CashAccount = oTargetDoc.PaymentType.GLAccount;
-                                        // End ver 1.0.8
+                                        oDoc.CreditCards.VoucherNum = oTargetDoc.ReferenceNum.Substring(1, 19).ToString();
+                                    }
+                                    else
+                                    {
+                                        oDoc.CreditCards.VoucherNum = oTargetDoc.ReferenceNum;
                                     }
                                 }
 
-                                if (oTargetDoc.PaymentType.PaymentMean == "CCARD")
-                                {
-                                    oDoc.CreditCards.CreditSum += Convert.ToDouble(detail.PaymentAmount);
-                                    // Start ver 1.0.8
-                                    //oDoc.CreditCards.CreditAcct = detail.GLAccount.AcctCode;
-                                    oDoc.CreditCards.CreditAcct = oTargetDoc.PaymentType.GLAccount;
-                                    // End ver 1.0.8
-                                    oDoc.CreditCards.PaymentMethodCode = oTargetDoc.PaymentType.CCardPayMethodCode;
-                                    oDoc.CreditCards.VoucherNum = oTargetDoc.ReferenceNum;
-                                    oDoc.CreditCards.CardValidUntil = DateTime.Parse("01/12/" + DateTime.Today.Year);
-                                    oDoc.CreditCards.CreditCardNumber = oTargetDoc.CreditCardNum;
-                                    oDoc.CreditCards.CreditCard = oTargetDoc.PaymentType.CCardPayMethodCode;
-                                }
-
-                                if (oTargetDoc.PaymentType.PaymentMean == "TRANSFER")
-                                {
-                                    oDoc.TransferSum += Convert.ToDouble(detail.PaymentAmount);
-                                    // Start ver 1.0.8
-                                    //oDoc.TransferAccount = detail.GLAccount.AcctCode;
-                                    oDoc.TransferAccount = oTargetDoc.PaymentType.GLAccount;
-                                    // End ver 1.0.GLAccount
-                                    oDoc.TransferReference = oTargetDoc.ReferenceNum;
-                                }
-
-                                if (oTargetDoc.PaymentType.PaymentMean == "CHEQUE")
-                                {
-                                    oDoc.Checks.CheckSum += Convert.ToDouble(detail.PaymentAmount);
-                                    // Start ver 1.0.8
-                                    //oDoc.Checks.CheckAccount = detail.GLAccount.AcctCode;
-                                    oDoc.Checks.CheckAccount = oTargetDoc.PaymentType.GLAccount;
-                                    // End ver 1.0.8
-                                    oDoc.Checks.BankCode = oTargetDoc.ChequeBank.BankCode;
-                                    oDoc.Checks.CheckNumber = int.Parse(oTargetDoc.CheckNum);
-                                }
+                                oDoc.CreditCards.CardValidUntil = DateTime.Parse("01/12/" + DateTime.Today.Year);
+                                oDoc.CreditCards.CreditCardNumber = oTargetDoc.CreditCardNum;
+                                oDoc.CreditCards.CreditCard = oTargetDoc.PaymentType.CCardPayMethodCode;
                             }
 
-                            oDoc.Invoices.DocEntry = DPDocEntry;
-                            oDoc.Invoices.InvoiceType = BoRcptInvTypes.it_DownPayment;
-                            oDoc.Invoices.SumApplied = Convert.ToDouble(detail.Total);
-                            oDoc.Invoices.Add();
-
-                            int rc = oDoc.Add();
-                            if (rc != 0)
+                            if (oTargetDoc.PaymentType.PaymentMean == "TRANSFER")
                             {
-                                string temp = sap.oCom.GetLastErrorDescription();
-                                if (sap.oCom.InTransaction)
+                                oDoc.TransferSum += Convert.ToDouble(detail.PaymentAmount);
+                                // Start ver 1.0.8
+                                //oDoc.TransferAccount = detail.GLAccount.AcctCode;
+                                oDoc.TransferAccount = oTargetDoc.PaymentType.GLAccount;
+                                // End ver 1.0.8
+
+                                //oDoc.TransferReference = oTargetDoc.ReferenceNum;
+                                int countchar = 0;
+                                if (oTargetDoc.ReferenceNum != null)
                                 {
-                                    sap.oCom.EndTransaction(BoWfTransOpt.wf_RollBack);
+                                    foreach (char c in oTargetDoc.ReferenceNum)
+                                    {
+                                        countchar++;
+                                    }
+                                    if (countchar >= 26)
+                                    {
+                                        oDoc.TransferReference = oTargetDoc.ReferenceNum.Substring(1, 26).ToString();
+                                    }
+                                    else
+                                    {
+                                        oDoc.TransferReference = oTargetDoc.ReferenceNum;
+                                    }
                                 }
-
-                                IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
-                                SalesOrderCollection obj = osupdate.GetObjectByKey<SalesOrderCollection>(oTargetDoc.Oid);
-
-                                SalesOrderCollectionDocStatus ds = osupdate.CreateObject<SalesOrderCollectionDocStatus>();
-                                ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
-                                ds.CreateDate = DateTime.Now;
-                                ds.DocStatus = DocStatus.PendPost;
-                                ds.DocRemarks = "SAP Error:" + temp;
-                                obj.SalesOrderCollectionDocStatus.Add(ds);
-
-                                osupdate.CommitChanges();
-
-                                WriteLog("[Error]", "Message: AR Downpayment Payment Posting :" + oTargetDoc + "-" + temp);
-
-                                return -1;
                             }
-                            return 1;
+
+                            if (oTargetDoc.PaymentType.PaymentMean == "CHEQUE")
+                            {
+                                oDoc.Checks.CheckSum += Convert.ToDouble(detail.PaymentAmount);
+                                // Start ver 1.0.8
+                                //oDoc.Checks.CheckAccount = detail.GLAccount.AcctCode;
+                                oDoc.Checks.CheckAccount = oTargetDoc.PaymentType.GLAccount;
+                                // End ver 1.0.8
+                                oDoc.Checks.BankCode = oTargetDoc.ChequeBank.BankCode;
+                                oDoc.Checks.CheckNumber = int.Parse(oTargetDoc.CheckNum);
+                            }
                         }
+
+                        oDoc.Invoices.DocEntry = DPDocEntry;
+                        oDoc.Invoices.InvoiceType = BoRcptInvTypes.it_DownPayment;
+                        oDoc.Invoices.SumApplied = Convert.ToDouble(detail.Total);
+                        oDoc.Invoices.Add();
+
+                        int rc = oDoc.Add();
+                        if (rc != 0)
+                        {
+                            string temp = sap.oCom.GetLastErrorDescription();
+                            if (sap.oCom.InTransaction)
+                            {
+                                sap.oCom.EndTransaction(BoWfTransOpt.wf_RollBack);
+                            }
+
+                            IObjectSpace osupdate = ObjectSpaceProvider.CreateObjectSpace();
+                            SalesOrderCollection obj = osupdate.GetObjectByKey<SalesOrderCollection>(oTargetDoc.Oid);
+
+                            SalesOrderCollectionDocStatus ds = osupdate.CreateObject<SalesOrderCollectionDocStatus>();
+                            ds.CreateUser = osupdate.GetObjectByKey<ApplicationUser>(Guid.Parse("100348B5-290E-47DF-9355-557C7E2C56D3"));
+                            ds.CreateDate = DateTime.Now;
+                            ds.DocStatus = DocStatus.PendPost;
+                            ds.DocRemarks = "SAP Error:" + temp;
+                            obj.SalesOrderCollectionDocStatus.Add(ds);
+
+                            osupdate.CommitChanges();
+
+                            WriteLog("[Error]", "Message: AR Downpayment Payment Posting :" + oTargetDoc + "-" + temp);
+
+                            return -1;
+                        }
+                        return 1;
                     }
-                    return 0;
+                }
+                return 0;
                 //}
                 //return 0;
             }
