@@ -139,6 +139,9 @@
     <Compile Include="BusinessObjects\Credit Notes Cancellation\ARDownpaymentCancellationDocTrail.cs" />
     <Compile Include="BusinessObjects\CustomLogonParameters.cs" />
     <Compile Include="BusinessObjects\Dashboard\Dashboards.cs" />
+    <Compile Include="BusinessObjects\Dashboard\DashboardsPurchase.cs" />
+    <Compile Include="BusinessObjects\Dashboard\DashboardsSales.cs" />
+    <Compile Include="BusinessObjects\Dashboard\DashboardsWarehouse.cs" />
     <Compile Include="BusinessObjects\Delivery Order\DeliveryOrder.cs" />
     <Compile Include="BusinessObjects\Delivery Order\DeliveryOrderDetails.cs" />
     <Compile Include="BusinessObjects\Delivery Order\DeliveryOrderDocTrail.cs" />

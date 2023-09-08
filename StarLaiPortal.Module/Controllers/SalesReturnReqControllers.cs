@@ -232,15 +232,21 @@ namespace StarLaiPortal.Module.Controllers
                     //else
                     //{
                         string invoiceno = null;
+                        string dupinv = null;
                         foreach (vwInvoice dtl in e.PopupWindowViewSelectedObjects)
                         {
-                            if (invoiceno == null)
+                            if (dupinv != dtl.SAPDocNum)
                             {
-                                invoiceno = dtl.SAPDocNum;
-                            }
-                            else
-                            {
-                                invoiceno = invoiceno + ", " + dtl.SAPDocNum;
+                                if (invoiceno == null)
+                                {
+                                    invoiceno = dtl.SAPDocNum;
+                                }
+                                else
+                                {
+                                    invoiceno = invoiceno + ", " + dtl.SAPDocNum;
+                                }
+
+                                dupinv = dtl.SAPDocNum;
                             }
 
                             if (dtl.Salesperson != null)

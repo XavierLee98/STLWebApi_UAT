@@ -157,7 +157,14 @@
   </BOModel>
   <NavigationItems StartupNavigationItem="">
     <Items>
-      <Item Id="Dashboards" Index="0" />
+      <Item Id="Dashboards" Index="0">
+        <Items>
+          <Item Id="Dashboards_ListView" Visible="False" Index="0" />
+          <Item Id="DashboardsSales_ListView" Index="1" />
+          <Item Id="DashboardsPurchase_ListView" Index="2" />
+          <Item Id="DashboardsWarehouse_ListView" Index="3" />
+        </Items>
+      </Item>
       <Item Id="Default" Index="1">
         <Items>
           <Item Id="AddPickList_ListView" Removed="True" />
@@ -753,13 +760,79 @@
       <Columns>
         <ColumnInfo Id="PendingTransaction" Width="71" SortOrder="Ascending" GroupIndex="-1" Index="-1" SortIndex="1" />
         <ColumnInfo Id="DashboardType" SortOrder="Ascending" GroupIndex="1" />
-        <ColumnInfo Id="DocNum" Index="1" />
-        <ColumnInfo Id="CreateDate" Index="2" />
-        <ColumnInfo Id="Warehouse" Index="3" />
+        <ColumnInfo Id="DocNum" Index="1" Width="91" />
+        <ColumnInfo Id="CreateDate" Index="2" Width="65" />
+        <ColumnInfo Id="Warehouse" Index="3" Width="63" />
         <ColumnInfo Id="TransactionType" SortOrder="None" GroupIndex="-1" Index="4" />
         <ColumnInfo Id="CardCode" Index="5" />
         <ColumnInfo Id="CardName" Index="6" />
         <ColumnInfo Id="Department" SortOrder="Ascending" GroupIndex="0" />
+      </Columns>
+    </ListView>
+    <DetailView Id="DashboardsPurchase_DetailView" AllowEdit="False" />
+    <ListView Id="DashboardsPurchase_ListView" ShowAutoFilterRow="False" IsGroupPanelVisible="True">
+      <Columns>
+        <ColumnInfo Id="PendingTransaction" Index="-1" />
+        <ColumnInfo Id="TransactionType" Index="-1" />
+        <ColumnInfo Id="DocNum" Index="0" />
+        <ColumnInfo Id="CreateDate" Index="1" />
+        <ColumnInfo Id="DashboardType" SortOrder="Ascending" GroupIndex="1" Index="2" />
+        <ColumnInfo Id="Warehouse" Index="3" />
+        <ColumnInfo Id="CardCode" Index="4" />
+        <ColumnInfo Id="CardName" Index="5" />
+        <ColumnInfo Id="DocDate" Index="6" />
+        <ColumnInfo Id="DueDate" Index="7" />
+        <ColumnInfo Id="Remark" Index="8" />
+        <ColumnInfo Id="Transporter" Index="9" />
+        <ColumnInfo Id="Series" Index="10" />
+        <ColumnInfo Id="Status" Index="11" />
+        <ColumnInfo Id="SalesOrder" Index="12" />
+        <ColumnInfo Id="Salesperson" Index="13" />
+        <ColumnInfo Id="Department" SortOrder="Ascending" GroupIndex="0" Index="14" />
+      </Columns>
+    </ListView>
+    <DetailView Id="DashboardsSales_DetailView" AllowEdit="False" />
+    <ListView Id="DashboardsSales_ListView" IsGroupPanelVisible="True">
+      <Columns>
+        <ColumnInfo Id="PendingTransaction" Index="-1" />
+        <ColumnInfo Id="TransactionType" Index="-1" />
+        <ColumnInfo Id="DashboardType" SortOrder="Ascending" GroupIndex="1" />
+        <ColumnInfo Id="DocNum" Index="1" />
+        <ColumnInfo Id="CreateDate" Index="2" />
+        <ColumnInfo Id="Warehouse" Index="3" />
+        <ColumnInfo Id="CardCode" Index="4" />
+        <ColumnInfo Id="CardName" Index="5" />
+        <ColumnInfo Id="DocDate" Index="6" />
+        <ColumnInfo Id="DueDate" Index="7" />
+        <ColumnInfo Id="Remark" Index="8" />
+        <ColumnInfo Id="Transporter" Index="9" />
+        <ColumnInfo Id="Series" Index="10" />
+        <ColumnInfo Id="Status" Index="11" />
+        <ColumnInfo Id="SalesOrder" Index="12" />
+        <ColumnInfo Id="Salesperson" Index="13" />
+        <ColumnInfo Id="Department" SortOrder="Ascending" GroupIndex="0" Index="14" />
+      </Columns>
+    </ListView>
+    <DetailView Id="DashboardsWarehouse_DetailView" AllowEdit="False" />
+    <ListView Id="DashboardsWarehouse_ListView" IsGroupPanelVisible="True">
+      <Columns>
+        <ColumnInfo Id="PendingTransaction" Index="-1" SortOrder="None" GroupIndex="-1" />
+        <ColumnInfo Id="TransactionType" Index="-1" />
+        <ColumnInfo Id="DashboardType" SortOrder="Ascending" GroupIndex="1" />
+        <ColumnInfo Id="DocNum" Index="1" />
+        <ColumnInfo Id="CreateDate" Index="2" />
+        <ColumnInfo Id="Warehouse" Index="3" />
+        <ColumnInfo Id="CardCode" Index="4" />
+        <ColumnInfo Id="CardName" Index="5" />
+        <ColumnInfo Id="DocDate" Index="6" />
+        <ColumnInfo Id="DueDate" Index="7" />
+        <ColumnInfo Id="Remark" Index="8" />
+        <ColumnInfo Id="Transporter" Index="9" />
+        <ColumnInfo Id="Series" Index="10" />
+        <ColumnInfo Id="Status" Index="11" />
+        <ColumnInfo Id="SalesOrder" Index="12" />
+        <ColumnInfo Id="Salesperson" Index="13" />
+        <ColumnInfo Id="Department" SortOrder="Ascending" GroupIndex="0" Index="14" />
       </Columns>
     </ListView>
     <ListView Id="DeliveryOrder_AuditTrail_ListView" AllowDelete="False" AllowLink="False" AllowNew="False" />

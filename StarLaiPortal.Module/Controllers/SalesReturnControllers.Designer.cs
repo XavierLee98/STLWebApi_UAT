@@ -69,7 +69,7 @@
             // 
             // PrintCreditMemo
             // 
-            this.PrintCreditMemo.Caption = "Print";
+            this.PrintCreditMemo.Caption = "Preview";
             this.PrintCreditMemo.Category = "ObjectsCreation";
             this.PrintCreditMemo.ConfirmationMessage = null;
             this.PrintCreditMemo.Id = "PrintCreditMemo";
