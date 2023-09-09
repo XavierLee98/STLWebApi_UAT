@@ -34,7 +34,7 @@ using System.Web.UI;
 
 // 2023-07-28 block submit if no address for OC and OS ver 1.0.7
 // 2023-08-16 - add stock 3 and stock 4 - ver 1.0.8
-// 2023-09-07 check stock when approve ver 1.0.8.1
+// 2023-09-07 check stock when approve ver 1.0.9
 
 namespace StarLaiPortal.Module.Controllers
 {

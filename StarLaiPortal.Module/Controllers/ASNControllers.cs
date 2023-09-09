@@ -598,7 +598,7 @@ namespace StarLaiPortal.Module.Controllers
                             <vwBin>(CriteriaOperator.Parse("BinCode = ?", dtl.DefBin.BinCode));
                     }
                     newgrnitem.OpenQty = dtl.UnloadQty;
-                    newgrnitem.Received = dtl.UnloadQty;
+                    newgrnitem.Received = 0;
                     newgrnitem.PORefNo = dtl.PORefNo;
                     newgrnitem.ASNBaseDoc = asn.DocNum;
                     newgrnitem.ASNBaseId = dtl.Oid.ToString();

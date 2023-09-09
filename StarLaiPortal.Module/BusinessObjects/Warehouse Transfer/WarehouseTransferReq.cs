@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 
 // 2023-08-25 - export and import function - ver 1.0.9
+// 2023-09-08 - allow cancel after submit - ver 1.0.9
 
 namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
 {
@@ -31,9 +32,13 @@ namespace StarLaiPortal.Module.BusinessObjects.Warehouse_Transfer
     [Appearance("HideDelete", AppearanceItemType.Action, "True", TargetItems = "Delete", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
     [Appearance("HideSubmit", AppearanceItemType.Action, "True", TargetItems = "SubmitWTR", Criteria = "not (Status in (0))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
     [Appearance("HideSubmit1", AppearanceItemType.Action, "True", TargetItems = "SubmitWTR", Criteria = "(AppStatus in (2))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
-
-    [Appearance("HideCancel", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "not (Status in (0))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
-    [Appearance("HideCancel1", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "(AppStatus in (2))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    
+    [Appearance("HideCancel", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "not (Status in (0)) and CopyTo = 1", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    // Start ver 1.0.9
+    //[Appearance("HideCancel1", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "(AppStatus in (2))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    [Appearance("HideCancel1", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "(Status in (1)) and CopyTo = 1", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    [Appearance("HideCancel2", AppearanceItemType.Action, "True", TargetItems = "CancelWTR", Criteria = "(Status in (2))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
+    // End ver 1.0.9
 
     [Appearance("HideCopyTo", AppearanceItemType.Action, "True", TargetItems = "WTRCopyToWT", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "WarehouseTransferReq_DetailView_Approval")]
     [Appearance("HideCopyTo1", AppearanceItemType.Action, "True", TargetItems = "WTRCopyToWT", Criteria = "(not (Status in (1))) or ((Status in (1)) and (not AppStatus in (0, 1)))", Visibility = DevExpress.ExpressApp.Editors.ViewItemVisibility.Hide, Context = "Any")]
